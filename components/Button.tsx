@@ -2,19 +2,27 @@
 
 import clsx from "clsx"
 
-interface ButtonProps{
-    children? :React.ReactNode,
-    className? : string,
-    type?:"button" | "submit" | "reset" 
+interface ButtonProps {
+  variant?: string
+  onClick?: () => void
+  children?: React.ReactNode,
+  className?: string,
+  type?: "button" | "submit" | "reset",
+  disabled?: boolean
 }
 
-const Button:React.FC<ButtonProps> = ({
-    children,
-    className,
-    type
+const Button: React.FC<ButtonProps> = ({
+  children,
+  className,
+  type,
+  onClick,
+  variant,
+  disabled
 }) => {
   return (
     <button
+      onClick={onClick}
+      disabled={disabled}
       type={type}
       className={clsx(`
           text-white
@@ -27,11 +35,13 @@ const Button:React.FC<ButtonProps> = ({
           hover:bg-[#0652DD]
           justify-center
           `,
-          className
-          )
-        }
-        >
-        {children}
+        `${variant === "ghost" ? 'bg-white text-neutral-700 hover:bg-slate-300' : ''}`,
+        className
+      )
+
+      }
+    >
+      {children}
     </button>
   )
 }
