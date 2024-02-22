@@ -35,7 +35,7 @@ const Button: React.FC<ButtonProps> = ({
           hover:bg-[#0652DD]
           justify-center
           `,
-        `${variant === "ghost" ? 'bg-white text-neutral-700 hover:bg-slate-300' : ''}`,
+        `${variant === "ghost" ? 'bg-white text-black hover:bg-slate-300' : ''}`,
         className
       )
 
