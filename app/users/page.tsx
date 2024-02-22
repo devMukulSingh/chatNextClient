@@ -4,12 +4,12 @@ import { signOut } from "next-auth/react"
 import { useRouter } from "next/navigation";
 
 const UsersPage = () => {
-  const handleLogout = ( ) => {
-    signOut({callbackUrl:'/'});
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' });
   }
   return (
-    <div>
-      <Button onClick={ handleLogout }>
+    <div className="bg-slate-900 h-screen">
+      <Button onClick={handleLogout}>
         Logout
       </Button>
     </div>
