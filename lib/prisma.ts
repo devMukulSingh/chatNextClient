@@ -4,6 +4,8 @@ import { PrismaClient } from "@prisma/client";
 //This line creates a variable named globalForPrisma and attempts to cast globalThis 
 //(the global object in a browser or the global object in Node.js) 
 //to an object with a property named prisma of type PrismaClient. 
+
+
 //This is done to store the Prisma client globally.
 const globalThisForPrisma = globalThis as unknown as { prisma : PrismaClient}
 

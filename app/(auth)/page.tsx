@@ -8,12 +8,11 @@ import * as z from "zod";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { useState } from "react";
-import { FaGithub, FaGoogle } from "react-icons/fa";
-import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Error from "./Error";
+import { BASE_URL } from "@/lib/BASE_URL";
 
 export default function Auth() {
 
@@ -45,23 +44,14 @@ export default function Auth() {
     try {
       setLoading(true);
       if (type === 'signup') {
-        await axios.post(`/api/user`, data);
-        signIn('credentials', data);
-
+        await axios.post(`${BASE_URL}/api/auth/add-user`, data);
+        router.push(`/user`);
       }
       else if (type === 'signin') {
-        const callback = await signIn('credentials', {
-          ...data,
-          redirect: false,
+        await axios.get(`${BASE_URL}/api/auth/check-user`, {
+          params: data,
         });
-        if (callback?.error) {
-          toast.error(`Invalid Credentials`);
-        }
-
-        if (callback?.ok && !callback?.error) {
-          toast.success(`Login success`);
-          router.push('/users');
-        }
+        router.push(`/user`);
       }
     } catch (e) {
       console.log(`Error in onsubmit ${e}`);
@@ -70,7 +60,6 @@ export default function Auth() {
     finally {
       setLoading(false);
     }
-
 
   }
 
@@ -82,21 +71,7 @@ export default function Auth() {
       setType("signin");
     }
   }
-  const handleClick = async (action: string) => {
 
-    setLoading(true);
-
-    signIn(action, { redirect: false })
-      .then((callback) => {
-        if (callback?.error) {
-          toast.error(`Invalid credentials`);
-        }
-        if (callback?.ok && !callback?.error) {
-          toast.success(`Login sucess`);
-        }
-      })
-      .finally(() => setLoading(false))
-  }
   return (
     <main className="flex h-screen w-screen justify-center items-center">
       <section className="flex flex-col gap-5 px-5 py-14 border bg-slate-100 shadow-2xl">
@@ -148,29 +123,7 @@ export default function Auth() {
           }
 
         </h1>
-        <h1 className="text-slate-700 text-center">
-          or Continue with
-        </h1>
-        <div className="flex gap-2">
-          <Button
-            disabled={loading}
-            variant="ghost"
-            onClick={() => handleClick("google")}
-            className="gap-3"
-          >
-            <FaGoogle size={20} />
-            Continue with Google
-          </Button>
-          <Button
-            disabled={loading}
-            variant="ghost"
-            className="gap-3"
-            onClick={() => handleClick("github")}
-          >
-            <FaGithub size={20} />
-            Continue with Github
-          </Button>
-        </div>
+
       </section>
     </main>
 
