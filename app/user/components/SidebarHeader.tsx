@@ -1,6 +1,6 @@
 'use client'
 import Button from "@/components/Button"
-import { BASE_URL } from "@/lib/BASE_URL"
+import { BASE_URL_CLIENT, BASE_URL_SERVER } from "@/lib/BASE_URL"
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -13,7 +13,9 @@ const SidebarHeader = () => {
 
   const image = 'https://lh3.googleusercontent.com/a/ACg8ocKpWZffOwLfdPRCRKfFYdW36Fnda6Zo_jKH3AOYWvf3FA=s360-c-no'
   const handleLogout = async () => {
-    await axios.get(`${BASE_URL}/api/auth/logout-user`);
+    await axios.get(`${BASE_URL_SERVER}/api/auth/logout-user`);
+    await axios.get(`${BASE_URL_CLIENT}/api/user`);
+    localStorage.removeItem('token');
     router.push('/');
   }
 

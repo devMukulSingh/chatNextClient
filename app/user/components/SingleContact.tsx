@@ -1,6 +1,13 @@
+import { IContacts } from "@/lib/types";
 import Image from "next/image";
 
-const SingleContact = () => {
+interface SingleContactProps{
+    contact:IContacts
+}
+
+const SingleContact:React.FC<SingleContactProps> = ({
+    contact
+}) => {
     const image = 'https://lh3.googleusercontent.com/a/ACg8ocKpWZffOwLfdPRCRKfFYdW36Fnda6Zo_jKH3AOYWvf3FA=s360-c-no'
   return (
     <main className="w-full flex hover:bg-slate-800 rounded-lg gap-5 px-5 py-5 cursor-pointer shadow-slate-700 shadow-md">
@@ -14,7 +21,7 @@ const SingleContact = () => {
         </figure>
         <section>
         <h1 className="text-lg">
-            Mukul singh bisht
+            {contact.name}
         </h1>
         <h1 className="text-sm text-neutral-400">
             hey,hello how r you

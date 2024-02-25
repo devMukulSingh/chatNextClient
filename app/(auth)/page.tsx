@@ -12,7 +12,9 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Error from "./Error";
-import { BASE_URL } from "@/lib/BASE_URL";
+import { BASE_URL_SERVER } from "@/lib/BASE_URL";
+import { BASE_URL_CLIENT } from "@/lib/BASE_URL";
+
 
 export default function Auth() {
 
@@ -44,14 +46,18 @@ export default function Auth() {
     try {
       setLoading(true);
       if (type === 'signup') {
-        await axios.post(`${BASE_URL}/api/auth/add-user`, data);
-        router.push(`/user`);
+        const res = await axios.post(`${BASE_URL_SERVER}/api/auth/add-user`, data);
+        await axios.post(`${BASE_URL_CLIENT}/api/user`,{token:res.data.token});
+        router.push(`/user/${res.data.id}`);
+        localStorage.setItem('token',res.data.token);
       }
       else if (type === 'signin') {
-        await axios.get(`${BASE_URL}/api/auth/check-user`, {
+        const res = await axios.get(`${BASE_URL_SERVER}/api/auth/check-user`, {
           params: data,
         });
-        router.push(`/user`);
+        await axios.post(`${BASE_URL_CLIENT}/api/user`,{token:res.data.token});
+        router.push(`/user/${res.data.id}`);
+        localStorage.setItem('token',res.data.token);
       }
     } catch (e) {
       console.log(`Error in onsubmit ${e}`);

@@ -1,8 +1,15 @@
-import React from 'react'
+import SingleMessage from './SingleMessage'
 
 const ChatMessages = () => {
   return (
-    <div>ChatMessages</div>
+    <main className='flex flex-col gap-2 p-5'>
+      <SingleMessage/>
+      <SingleMessage/>
+      <SingleMessage/>
+      <SingleMessage/>
+      <SingleMessage/>
+
+    </main>
   )
 }
 
