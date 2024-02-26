@@ -15,7 +15,6 @@ const UsersPage = async(
     <main className="bg-slate-900 h-screen text-white flex ">
       <Sidebar/>
       <ChatSection/>
-      {/* <EmptyChat/> */}
     </main>
   )
 }

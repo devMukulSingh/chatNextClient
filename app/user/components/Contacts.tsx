@@ -9,7 +9,7 @@ const Contacts = async() => {
   return (
     <main className='overflow-auto rounded-md flex flex-col min-w-[25rem] h-full'>
         {
-          contacts.map( (contact) => (
+          contacts?.map( (contact) => (
             <SingleContact contact={contact} key={contact.id}/>
           ))
         }

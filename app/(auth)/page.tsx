@@ -14,10 +14,12 @@ import { useRouter } from "next/navigation";
 import Error from "./Error";
 import { BASE_URL_SERVER } from "@/lib/BASE_URL";
 import { BASE_URL_CLIENT } from "@/lib/BASE_URL";
+import { useAppDispatch } from "@/redux/hooks";
 
 
 export default function Auth() {
 
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const [type, setType] = useState("signin");
   const [loading, setLoading] = useState(false);
@@ -49,7 +51,8 @@ export default function Auth() {
         const res = await axios.post(`${BASE_URL_SERVER}/api/auth/add-user`, data);
         await axios.post(`${BASE_URL_CLIENT}/api/user`,{token:res.data.token});
         router.push(`/user/${res.data.id}`);
-        localStorage.setItem('token',res.data.token);
+        localStorage.setItem('currentUser',JSON.stringify(res.data));
+
       }
       else if (type === 'signin') {
         const res = await axios.get(`${BASE_URL_SERVER}/api/auth/check-user`, {
@@ -57,7 +60,7 @@ export default function Auth() {
         });
         await axios.post(`${BASE_URL_CLIENT}/api/user`,{token:res.data.token});
         router.push(`/user/${res.data.id}`);
-        localStorage.setItem('token',res.data.token);
+        localStorage.setItem('currentUser',JSON.stringify(res.data));
       }
     } catch (e) {
       console.log(`Error in onsubmit ${e}`);

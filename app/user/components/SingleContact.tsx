@@ -1,4 +1,7 @@
+"use client"
 import { IContacts } from "@/lib/types";
+import { setReceiverUser } from "@/redux/chatSlice";
+import { useAppDispatch } from "@/redux/hooks";
 import Image from "next/image";
 
 interface SingleContactProps{
@@ -9,8 +12,16 @@ const SingleContact:React.FC<SingleContactProps> = ({
     contact
 }) => {
     const image = 'https://lh3.googleusercontent.com/a/ACg8ocKpWZffOwLfdPRCRKfFYdW36Fnda6Zo_jKH3AOYWvf3FA=s360-c-no'
-  return (
-    <main className="w-full flex hover:bg-slate-800 rounded-lg gap-5 px-5 py-5 cursor-pointer shadow-slate-700 shadow-md">
+
+    const dispatch = useAppDispatch();
+    
+  const handleClick = () => {
+    dispatch(setReceiverUser(contact));
+  }
+    return (
+    <main
+        onClick={ handleClick } 
+        className="w-full flex hover:bg-slate-800 rounded-lg gap-5 px-5 py-5 cursor-pointer shadow-slate-700 shadow-md">
         <figure className="relative size-10">
             <Image 
             src={image} 
