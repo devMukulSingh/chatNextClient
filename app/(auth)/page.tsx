@@ -19,7 +19,6 @@ import { useAppDispatch } from "@/redux/hooks";
 
 export default function Auth() {
 
-  const dispatch = useAppDispatch();
   const router = useRouter();
   const [type, setType] = useState("signin");
   const [loading, setLoading] = useState(false);

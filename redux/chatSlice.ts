@@ -1,10 +1,14 @@
 import { IInitialState } from "@/lib/types";
 import { createSlice } from "@reduxjs/toolkit";
+import { getMessages } from "./reducers/getMessages";
+
 
 const initialState:IInitialState = {
     receiverUser:null,
     currentUser : null,
     openDialog:false,
+     messages: null,
+     socket : null,
 }
 
 const chatSlice = createSlice({
@@ -19,11 +23,30 @@ const chatSlice = createSlice({
         },
         setOpenDialog : (state) => {
             state.openDialog = !state.openDialog;
-        }
+        },
+        setSocket : (state,action) => {
+            state.socket = action.payload;
+        },
+        setSocketMessage : (state,action) => {
+            state.messages?.push(action.payload);
+        },
+ 
+    },
+    extraReducers: (builder) => {
+        builder.addCase(getMessages.fulfilled , (state,action) => {
+            state.messages = action.payload;
+        })
     }
 })
 
 
 export default chatSlice.reducer;
 
-export const{ setReceiverUser,setCurrentUser,setOpenDialog } = chatSlice.actions;
+export const{ 
+    setReceiverUser,
+    setCurrentUser,
+    setOpenDialog,
+    setSocket,
+    setSocketMessage,
+     
+} = chatSlice.actions;

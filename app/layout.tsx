@@ -19,11 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-          <div id="modal"></div>
+        <div id="modal"></div>
+        <div id="image-modal"></div>
         <Providers>
           {children}
         </Providers>
-          <Toaster/>
+        <Toaster />
       </body>
     </html>
   );

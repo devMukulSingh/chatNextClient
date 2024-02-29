@@ -25,7 +25,7 @@ const Input:React.FC<InputProps> = ({
   return (
     <input 
         disabled={disabled}
-        className='p-3 focus:outline-none'
+        className='p-3 focus:outline-none disabled:pointer-events-none '
         type={type}
         {...register(name)}
         placeholder={placeholder}

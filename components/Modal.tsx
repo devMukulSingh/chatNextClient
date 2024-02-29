@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 
 interface ModalProps {
     title: string,
-    onConform: () => void,
+    onConform? : () => void,
     value: string,
     setValue: (value: string) => void,
     setOpenDialog: (arg0: boolean) => void,

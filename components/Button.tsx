@@ -25,6 +25,8 @@ const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       type={type}
       className={clsx(`
+          disabled:pointer-events-none 
+          disabled:opacity-50
           text-white
           flex 
           items-center 

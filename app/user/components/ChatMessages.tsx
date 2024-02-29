@@ -1,49 +1,59 @@
 import { IContacts, IMessage } from '@/lib/types'
 import SingleMessage from './SingleMessage'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { BASE_URL_SERVER } from '@/lib/BASE_URL'
+import { useEffect, useRef, useState } from 'react'
+import { getMessages } from '@/redux/reducers/getMessages'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import EmptyMessage from './commons/EmptyMessage'
+import { Socket } from 'socket.io-client'
+import { setSocketMessage } from '@/redux/chatSlice'
+import FileMessage from './FileMessage'
 
 interface ChatMessagesProps {
-  receiverUser: IContacts | null
+  receiverUser: IContacts | null,
+  socket: {
+    current: Socket | null
+  }
 }
-const ChatMessages:React.FC<ChatMessagesProps> = ({
-  receiverUser
+const ChatMessages: React.FC<ChatMessagesProps> = ({
+  receiverUser,
+  socket
 }) => {
 
-  const [messages, setMessages] = useState<IMessage[]>([]);
-
+  const dispatch = useAppDispatch();
   const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-
-  useEffect( () => {
-
-   const getMessages = async() => {
-    
-      try{
-
-          const { data } =  await axios.get(`${BASE_URL_SERVER}/api/message/get-messages`,{
-              params:{
-                  senderId:currentUser.id,
-                  receiverId:receiverUser?.id
-              }
-          });
-          setMessages(data);
-      }
-      catch(e){
-          console.log(`Error in getMessages ${e}`);
-          
-      }
-  }
-  getMessages();
-  },[receiverUser])
-
+  const messages = useAppSelector(state => state.chatSlice.messages);
   
+  const mainComponent = useRef<HTMLDivElement>(null);
+  
+ 
+
+  useEffect(() => {
+
+    const componentHeight = mainComponent.current?.scrollHeight;
+    mainComponent.current?.scrollTo(0,componentHeight||0);
+  }, [receiverUser,messages])
+
+  useEffect(() => {
+    dispatch(getMessages({
+      senderId: currentUser.id,
+      receiverId: receiverUser?.id
+    }))
+  }, [receiverUser]);
+
+
+
   return (
-    <main className='flex flex-col gap-2 p-5'>
+    <main className='flex flex-col gap-2 p-5 overflow-auto' ref={mainComponent}>
       {
-        messages.map( (message:IMessage) => (
-          <SingleMessage message={message} key={message.id}/>
-          ))
+        messages?.length === 0 ?
+          <EmptyMessage />
+          :
+          messages?.map((message) => {
+            if(message.type==='file') return <FileMessage message={message}/>
+            return(
+              <SingleMessage message={message} key={message.id} />
+              )
+            })
       }
     </main>
   )

@@ -8,8 +8,10 @@ import { useEffect, useState } from "react"
 import Modal from "@/components/Modal"
 import { useRouter } from "next/navigation"
 import { currentUser } from "@/lib/currentUser"
+import Image from "next/image"
+import ImageModal from "@/components/ImageModal"
 
-interface SingleMessageProps {
+interface FileMessageProps {
   message: IMessage,
 }
 
@@ -18,7 +20,7 @@ export interface IdropdownOptions {
   onClick: () => void,
 }
 
-const SingleMessage: React.FC<SingleMessageProps> = ({
+const FileMessage: React.FC<FileMessageProps> = ({
   message
 }) => {
 
@@ -28,15 +30,8 @@ const SingleMessage: React.FC<SingleMessageProps> = ({
   const [editMessage, setEditMessage] = useState("");
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openImage, setOpenImage] = useState(false);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(message.message);
-    setOpenDropdown(false);
-  }
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  }
   const handleDelete = async () => {
     try {
       setLoading(true);
@@ -53,68 +48,46 @@ const SingleMessage: React.FC<SingleMessageProps> = ({
       setLoading(false);
     }
   }
+  const handleDownload = async() => {
+    try{
+      await axios.get(`${BASE_URL_SERVER}/api/message/download-file/${message.id}`)
+    }
+    catch(e){
+      console.log(`Error in handleDownload ${e}`);
+    }
+  }
   const dropdownOptions: IdropdownOptions[] = [
-    {
-      title: "Copy",
-      onClick: handleCopy
-    },
-    {
-      title: "Edit",
-      onClick: handleOpenDialog
-    },
     {
       title: "Delete",
       onClick: handleDelete
+    },
+    {
+      title:'download',
+      onClick: handleDownload
     }
 
   ]
-  const handleEdit = async () => {
-    try {
-      await axios.patch(`${BASE_URL_SERVER}/api/message/edit-message`, {
-        message: editMessage,
-        messageId: message.id
-      });
-      setOpenDialog(false);
-    }
-    catch (e) {
-      console.log(`Error in handleEdit ${e}`);
-    }
-  }
   useEffect(() => {
-
     if (currentUser.id !== message.senderId) {
       setMessageType('received');
     }
   }, []);
-  // useEffect(() => {
 
-  //     const messageElem = document.querySelector('#message');
-  //     const width = messageElem?.scrollHeight
-  //     const height = messageElem?.clientHeight
-
-  //     console.log(width, height);
-  //     // const a = width*height
-  
-
-  // }, [message])
+  const imageUrl = message.message ? message.message : `${BASE_URL_SERVER}/api/message/get-file/${message.id}`;
+  const handleImageClick = () => {
+    setOpenImage(true);
+  } 
+  const handleMenu = () => {
+    setOpenDropdown(prev=>!prev)
+  }
   ////////////////////////////////////////////////////////////////////////////////////
   return (
     <>
-      {
-        openDialog &&
-        <Modal
-          onConform={handleEdit}
-          value={editMessage}
-          setValue={setEditMessage}
-          title="Edit message"
-          setOpenDialog={setOpenDialog}
-          loading={loading}
-        />
-      }
+
       <main
         className={`
+        relative
         bg-slate-700
-        flex
         px-2
         py-1
         rounded-md
@@ -125,24 +98,53 @@ const SingleMessage: React.FC<SingleMessageProps> = ({
         ease-in-out
         ${messageType === 'received' && 'ml-auto'}   
         `}>
-        <div id="message" className="self-center break-all line-clamp-3 ">{message?.message}</div>
-        <section className=" ml-auto">
-          <h1 className="text-[12px] whitespace-nowrap text-neutral-400 ml-auto mt-auto">
-            {message && format(message?.createdAt, "hh mm")}
+        <figure 
+          onClick={ handleImageClick }
+          id="message" 
+          className="relative self-center size-60 cursor-pointer">
+          <Image fill src={imageUrl} alt="sendImage" className="object-contain" />
+        </figure>
+        <section className="flex items-center">
+          <h1 className="text-[12px] whitespace-nowrap text-neutral-400">
+            {format(message.createdAt, "hh mm")}
           </h1>
           <RiArrowDropDownLine
             id="dropdownButton"
-            className="text-xl ml-auto cursor-pointer mt-auto"
-            onClick={() => setOpenDropdown(prev => !prev)}
+            className="text-2xl ml-auto cursor-pointer mt-auto"
+            onClick={ handleMenu }
           />
-          {openDropdown && <Dropdown options={dropdownOptions} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown} />}
+          {
+            openDropdown 
+            && 
+            <Dropdown  
+              options={dropdownOptions}  
+              openDropdown={openDropdown}
+              setOpenDropdown={setOpenDropdown}
+              />
+              }
         </section>
       </main>
-
-
+      {
+        openDialog &&
+        <Modal
+          value={editMessage}
+          setValue={setEditMessage}
+          title="Edit message"
+          setOpenDialog={setOpenDialog}
+          loading={loading}
+        />
+      }
+      {
+        openImage && 
+        <ImageModal
+          setOpenImage={setOpenImage}
+          imageUrl={imageUrl}
+          imageId={message.id}
+        />
+      }
 
     </>
   )
 }
 
-export default SingleMessage
+export default FileMessage
