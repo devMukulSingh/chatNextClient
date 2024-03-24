@@ -1,4 +1,4 @@
-
+cd client
 npm run check-types
 
 npm run check-format
