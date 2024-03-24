@@ -22,11 +22,9 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   const dispatch = useAppDispatch();
   const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
   const messages = useAppSelector(state => state.chatSlice.messages);
-  
   const mainComponent = useRef<HTMLDivElement>(null);
   
  
-
   useEffect(() => {
 
     const componentHeight = mainComponent.current?.scrollHeight;
@@ -39,8 +37,6 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
       receiverId: receiverUser?.id
     }))
   }, [receiverUser]);
-
-
 
   return (
     <main className='flex flex-col gap-2 p-5 overflow-auto' ref={mainComponent}>

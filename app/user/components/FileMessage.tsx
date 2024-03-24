@@ -48,11 +48,11 @@ const FileMessage: React.FC<FileMessageProps> = ({
       setLoading(false);
     }
   }
-  const handleDownload = async() => {
-    try{
+  const handleDownload = async () => {
+    try {
       await axios.get(`${BASE_URL_SERVER}/api/message/download-file/${message.id}`)
     }
-    catch(e){
+    catch (e) {
       console.log(`Error in handleDownload ${e}`);
     }
   }
@@ -62,7 +62,7 @@ const FileMessage: React.FC<FileMessageProps> = ({
       onClick: handleDelete
     },
     {
-      title:'download',
+      title: 'download',
       onClick: handleDownload
     }
 
@@ -73,13 +73,15 @@ const FileMessage: React.FC<FileMessageProps> = ({
     }
   }, []);
 
-  const imageUrl = message.message ? message.message : `${BASE_URL_SERVER}/api/message/get-file/${message.id}`;
   const handleImageClick = () => {
     setOpenImage(true);
-  } 
-  const handleMenu = () => {
-    setOpenDropdown(prev=>!prev)
   }
+  const handleMenu = () => {
+    setOpenDropdown(prev => !prev)
+  }
+  //changing imageUrl, if the image is coming through socket server then message.message else if coming from server then ->
+  const imageUrl = message.message ? message.message : `${BASE_URL_SERVER}/api/message/get-file/${message.id}`;
+
   ////////////////////////////////////////////////////////////////////////////////////
   return (
     <>
@@ -98,9 +100,9 @@ const FileMessage: React.FC<FileMessageProps> = ({
         ease-in-out
         ${messageType === 'received' && 'ml-auto'}   
         `}>
-        <figure 
-          onClick={ handleImageClick }
-          id="message" 
+        <figure
+          onClick={handleImageClick}
+          id="message"
           className="relative self-center size-60 cursor-pointer">
           <Image fill src={imageUrl} alt="sendImage" className="object-contain" />
         </figure>
@@ -111,17 +113,17 @@ const FileMessage: React.FC<FileMessageProps> = ({
           <RiArrowDropDownLine
             id="dropdownButton"
             className="text-2xl ml-auto cursor-pointer mt-auto"
-            onClick={ handleMenu }
+            onClick={handleMenu}
           />
           {
-            openDropdown 
-            && 
-            <Dropdown  
-              options={dropdownOptions}  
+            openDropdown
+            &&
+            <Dropdown
+              options={dropdownOptions}
               openDropdown={openDropdown}
               setOpenDropdown={setOpenDropdown}
-              />
-              }
+            />
+          }
         </section>
       </main>
       {
@@ -135,7 +137,7 @@ const FileMessage: React.FC<FileMessageProps> = ({
         />
       }
       {
-        openImage && 
+        openImage &&
         <ImageModal
           setOpenImage={setOpenImage}
           imageUrl={imageUrl}

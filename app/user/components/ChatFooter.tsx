@@ -5,7 +5,7 @@ import { IContacts } from '@/lib/types'
 import { setSocketMessage } from '@/redux/chatSlice'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { BiPlus, BiSend } from 'react-icons/bi'
 import { Socket, io } from 'socket.io-client'
 
@@ -21,7 +21,9 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
   socket
 }) => {
 
+  const inputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
+  const [file, setFile] = useState<File | undefined>();
   const dispatch = useAppDispatch();
   const sender: IContacts = JSON.parse(localStorage.getItem('currentUser') || '{}');
 
@@ -48,7 +50,6 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
         createdAt: Date.now()
       });
 
-      console.log("senderEvent triggered");
       try {
         const res = await axios.post(`${BASE_URL_SERVER}/api/message/post-message`, {
           receiverId: receiverUser?.id,
@@ -62,50 +63,59 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
       }
     }
   }
-  const handleFileUpload = () => {
-    let inputElem;
-    inputElem = document.createElement('input');
-    inputElem.type = 'file';
-    inputElem.name = 'file';
-    inputElem.addEventListener("change", async () => {
 
-      const formData = new FormData();
-      if (inputElem?.files?.[0]) {
-        formData.append('file', inputElem.files[0]);
-      }
-      const { data: res } = await axios.post(`${BASE_URL_SERVER}/api/message/upload-file`,
-        formData,
-        {
-          params: {
-            senderId: sender.id,
-            receiverId: receiverUser?.id,
-            type:'file'
-          }
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    setFile(e.target?.files?.[0]);
+
+    const formData = new FormData();
+    if (file) {
+      formData.append('file', file);
+    }
+    
+    const { data: res } = await axios.post(`${BASE_URL_SERVER}/api/message/upload-file`,
+      formData,
+      {
+        params: {
+          senderId: sender.id,
+          receiverId: receiverUser?.id,
+          type: 'file'
         }
-        
-        );
-        console.log(res);
-      dispatch(setSocketMessage({
-        type:'file',
-        senderId:sender.id,
-        receiverId:receiverUser?.id,
-        message:res.path,
-        createdAt:Date.now(),
+      }
 
-    }))
+    );
+    console.log(res);
+    dispatch(setSocketMessage({
+      type: 'file',
+      senderId: sender.id,
+      receiverId: receiverUser?.id,
+      message: res.path,
+      createdAt: Date.now(),
+    }));
 
-
+    socket.current?.emit('send-msg', {
+      type: 'file',
+      message: res.path,
+      receiverId: receiverUser?.id,
+      senderId: sender.id,
+      createdAt: Date.now()
     });
-    inputElem.click();
+
   }
-  // console.log(inputElem?.files);
+  /////////////////////////////////////////////////////////////////////
   return (
     <main className='flex gap-5 mt-auto items-center  bg-slate-800 h-20 px-10 py-5'>
 
-      <Button className='w-fit' onClick={handleFileUpload}>
+      <Button className='w-fit' onClick={() => inputRef.current?.click()}>
         <BiPlus className='cursor-pointer text-3xl' />
       </Button>
-
+      <input
+        name="file"
+        type='file'
+        ref={inputRef}
+        onChange={(e) => handleFileUpload(e)}
+        className='hidden'
+      />
       <input
         value={message}
         onKeyUp={(e) => onKeyUp(e)}
