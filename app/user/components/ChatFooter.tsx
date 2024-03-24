@@ -6,6 +6,7 @@ import { setSocketMessage } from "@/redux/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
 import React, { useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { BiPlus, BiSend } from "react-icons/bi";
 import { Socket, io } from "socket.io-client";
 
@@ -22,7 +23,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
   const [file, setFile] = useState<File | undefined>();
   const dispatch = useAppDispatch();
   const sender: IContacts = JSON.parse(
-    localStorage.getItem("currentUser") || "{}",
+    localStorage.getItem("currentUser") || "{}"
   );
 
   const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -38,7 +39,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
         receiverId: receiverUser?.id,
         senderId: sender.id,
         createdAt: Date.now(),
-      }),
+      })
     );
     if (message.length !== 0) {
       socket.current?.emit("send-msg", {
@@ -55,7 +56,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
             receiverId: receiverUser?.id,
             senderId: sender.id,
             message,
-          },
+          }
         );
         setMessage("");
       } catch (e) {
@@ -65,11 +66,9 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFile(e.target?.files?.[0]);
-
     const formData = new FormData();
-    if (file) {
-      formData.append("file", file);
+    if (e.target.files) {
+      formData.append("file", e.target?.files?.[0]);
     }
 
     const { data: res } = await axios.post(
@@ -81,7 +80,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
           receiverId: receiverUser?.id,
           type: "file",
         },
-      },
+      }
     );
     console.log(res);
     dispatch(
@@ -89,14 +88,14 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
         type: "file",
         senderId: sender.id,
         receiverId: receiverUser?.id,
-        message: res.path,
+        message: res,
         createdAt: Date.now(),
-      }),
+      })
     );
 
     socket.current?.emit("send-msg", {
       type: "file",
-      message: res.path,
+      message: res,
       receiverId: receiverUser?.id,
       senderId: sender.id,
       createdAt: Date.now(),

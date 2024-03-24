@@ -1,1 +1,5 @@
-npm run test-all
+npx tsc --noemit && eslint
+
+npm run lint
+
+npx prettier . --write

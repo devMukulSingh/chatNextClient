@@ -76,8 +76,8 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
   };
   //changing imageUrl, if the image is coming through socket server then message.message else if coming from server then ->
   const imageUrl = message.message
-    ? message.message
-    : `${BASE_URL_SERVER}/api/message/get-file/${message.id}`;
+
+console.log(message);
 
   ////////////////////////////////////////////////////////////////////////////////////
   return (

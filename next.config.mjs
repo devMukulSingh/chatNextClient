@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: "http",
         hostname: "localhost",
       },
+      {
+        protocol: "https",
+        hostname: "chatnextfiles.s3.ap-south-1.amazonaws.com",
+      },
     ],
   },
 };

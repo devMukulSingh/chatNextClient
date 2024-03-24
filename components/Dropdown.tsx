@@ -17,7 +17,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   setOpenDropdown,
 }) => {
   useEffect(() => {
-    const handleOutsideClick = (e:any) => {
+    const handleOutsideClick = (e: any) => {
       if (e.target.id !== "dropdown" && e.target.id !== "dropdownButton") {
         setOpenDropdown(false);
       }

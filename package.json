@@ -7,11 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky",
-    "check-types": "tsc --noEmit",
-    "format": "prettier . --write",
-    "check-lint": "eslint . --ext ts --ext tsx --ext js",
-    "test-all": "npm run format && npm run check-types && npm run check-lint"
+    "prepare": "husky"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
