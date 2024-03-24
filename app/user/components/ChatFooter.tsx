@@ -12,7 +12,7 @@ import { Socket, io } from 'socket.io-client'
 interface ChatFooterProps {
   receiverUser: IContacts | null,
   socket: {
-    // current: Socket | null
+    current: Socket | null
   }
 }
 
