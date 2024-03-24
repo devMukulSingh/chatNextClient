@@ -3,20 +3,17 @@ import ChatSection from "../components/ChatSection";
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/actions/isAuthenticated";
 
-const UsersPage = async(
-  {params}:{ params : {userId:string}}
-) => {
+const UsersPage = async ({ params }: { params: { userId: string } }) => {
+  const res = await isAuthenticated();
 
-    const res = await isAuthenticated();
-    
-    if(!res) redirect('/');
+  if (!res) redirect("/");
 
   return (
     <main className="bg-slate-900 h-screen text-white flex ">
-      <Sidebar/>
-      <ChatSection/>
+      <Sidebar />
+      <ChatSection />
     </main>
-  )
-}
+  );
+};
 
-export default UsersPage
+export default UsersPage;

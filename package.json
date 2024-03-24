@@ -9,10 +9,9 @@
     "lint": "next lint",
     "prepare": "husky",
     "check-types": "tsc --noEmit",
-    "check-format": "prettier --check",
-    "format": "prettier --write .",
+    "format": "prettier . --write",
     "check-lint": "eslint . --ext ts --ext tsx --ext js",
-    "test-all": "npx tsc --noemit"
+    "test-all": "npm run format && npm run check-types && npm run check-lint"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
@@ -50,6 +49,7 @@
     "husky": "^9.0.11",
     "lint-staged": "^15.2.2",
     "postcss": "^8",
+    "prettier": "3.2.5",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
   }

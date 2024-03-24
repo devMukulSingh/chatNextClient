@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-html,body{
+html,
+body {
 }
 
 :root {
-    overflow: auto;
-    
+  overflow: auto;
 }

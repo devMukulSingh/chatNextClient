@@ -21,9 +21,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <div id="modal"></div>
         <div id="image-modal"></div>
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
         <Toaster />
       </body>
     </html>

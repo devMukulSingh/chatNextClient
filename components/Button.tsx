@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import clsx from "clsx"
+import clsx from "clsx";
 
 interface ButtonProps {
-  variant?: string
-  onClick?: () => void
-  children?: React.ReactNode,
-  className?: string,
-  type?: "button" | "submit" | "reset",
-  disabled?: boolean
+  variant?: string;
+  onClick?: () => void;
+  children?: React.ReactNode;
+  className?: string;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -17,14 +17,15 @@ const Button: React.FC<ButtonProps> = ({
   type,
   onClick,
   variant,
-  disabled
+  disabled,
 }) => {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       type={type}
-      className={clsx(`
+      className={clsx(
+        `
           disabled:pointer-events-none 
           disabled:opacity-50
           text-white
@@ -37,15 +38,13 @@ const Button: React.FC<ButtonProps> = ({
           hover:bg-[#0652DD]
           justify-center
           `,
-        `${variant === "ghost" ? 'bg-white text-black hover:bg-slate-300' : ''}`,
-        className
-      )
-
-      }
+        `${variant === "ghost" ? "bg-white text-black hover:bg-slate-300" : ""}`,
+        className,
+      )}
     >
       {children}
     </button>
-  )
-}
+  );
+};
 
-export default Button
+export default Button;

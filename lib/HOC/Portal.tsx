@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from 'react'
-import {createPortal} from "react-dom";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
-const Portal = ({children} : {children:React.ReactNode}) => {
-
+const Portal = ({ children }: { children: React.ReactNode }) => {
   const [isMounted, setIsMounted] = useState(false);
 
-  useEffect( () => {
+  useEffect(() => {
     setIsMounted(true);
-  },[]);
-  const modal = document.querySelector('#modal');
-  return isMounted && modal ? 
-    createPortal(children,modal) : null
-}
+  }, []);
+  const modal = document.querySelector("#modal");
+  return isMounted && modal ? createPortal(children, modal) : null;
+};
 
-export default Portal
+export default Portal;
