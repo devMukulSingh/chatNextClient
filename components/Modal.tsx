@@ -39,7 +39,7 @@ const Modal: React.FC<ModalProps> = ({
     <Portal>
       <main
         id="dialog"
-        className="bg-opacity-50 flex fixed items-center justify-center w-screen h-screen"
+        className="bg-opacity-50 z-50 flex fixed items-center justify-center w-screen h-screen"
       >
         <section
           id="inner-modal"

@@ -1,4 +1,4 @@
-npx tsc --noemit && eslint
+npx tsc --noemit
 
 npm run lint
 

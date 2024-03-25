@@ -33,12 +33,15 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
       getMessages({
         senderId: currentUser.id,
         receiverId: receiverUser?.id,
-      }),
+      })
     );
   }, [receiverUser]);
 
   return (
-    <main className="flex flex-col gap-2 p-5 overflow-auto" ref={mainComponent}>
+    <main
+      className="flex flex-col gap-2 py-5 px-20 overflow-auto"
+      ref={mainComponent}
+    >
       {messages?.length === 0 ? (
         <EmptyMessage />
       ) : (

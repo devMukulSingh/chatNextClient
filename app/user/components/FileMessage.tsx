@@ -22,7 +22,7 @@ export interface IdropdownOptions {
 
 const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
   const router = useRouter();
-  const [messageType, setMessageType] = useState("sent");
+  const [messageStatus, setMessageStatus] = useState("sent");
   const [loading, setLoading] = useState(false);
   const [editMessage, setEditMessage] = useState("");
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -46,7 +46,7 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
   const handleDownload = async () => {
     try {
       await axios.get(
-        `${BASE_URL_SERVER}/api/message/download-file/${message.id}`,
+        `${BASE_URL_SERVER}/api/message/download-file/${message.id}`
       );
     } catch (e) {
       console.log(`Error in handleDownload ${e}`);
@@ -64,7 +64,7 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
   ];
   useEffect(() => {
     if (currentUser.id !== message.senderId) {
-      setMessageType("received");
+      setMessageStatus("received");
     }
   }, []);
 
@@ -74,10 +74,7 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
   const handleMenu = () => {
     setOpenDropdown((prev) => !prev);
   };
-  //changing imageUrl, if the image is coming through socket server then message.message else if coming from server then ->
-  const imageUrl = message.message
-
-console.log(message);
+  const imageUrl = message.message;
 
   ////////////////////////////////////////////////////////////////////////////////////
   return (
@@ -94,13 +91,18 @@ console.log(message);
         gap-8 
         transition 
         ease-in-out
-        ${messageType === "received" && "ml-auto"}   
+        ${messageStatus === "received" && "ml-auto"}   
         `}
       >
         <figure
           onClick={handleImageClick}
           id="message"
-          className="relative self-center size-60 cursor-pointer"
+          className="relative 
+          self-center  
+          cursor-pointer
+          w-[15rem]
+          h-[15rem]
+          "
         >
           <Image
             fill
@@ -123,6 +125,8 @@ console.log(message);
               options={dropdownOptions}
               openDropdown={openDropdown}
               setOpenDropdown={setOpenDropdown}
+              messageStatus={messageStatus}
+              messageType={message.type}
             />
           )}
         </section>

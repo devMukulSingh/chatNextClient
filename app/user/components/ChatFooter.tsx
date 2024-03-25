@@ -20,7 +20,6 @@ interface ChatFooterProps {
 const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
-  const [file, setFile] = useState<File | undefined>();
   const dispatch = useAppDispatch();
   const sender: IContacts = JSON.parse(
     localStorage.getItem("currentUser") || "{}"
@@ -33,34 +32,36 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
   };
 
   const handleMessageSend = async () => {
-    dispatch(
-      setSocketMessage({
-        message,
-        receiverId: receiverUser?.id,
-        senderId: sender.id,
-        createdAt: Date.now(),
-      })
-    );
-    if (message.length !== 0) {
-      socket.current?.emit("send-msg", {
-        message,
-        receiverId: receiverUser?.id,
-        senderId: sender.id,
-        createdAt: Date.now(),
-      });
+    if (message !== "") {
+      dispatch(
+        setSocketMessage({
+          message,
+          receiverId: receiverUser?.id,
+          senderId: sender.id,
+          createdAt: Date.now(),
+        })
+      );
+      if (message.length !== 0) {
+        socket.current?.emit("send-msg", {
+          message,
+          receiverId: receiverUser?.id,
+          senderId: sender.id,
+          createdAt: Date.now(),
+        });
 
-      try {
-        const res = await axios.post(
-          `${BASE_URL_SERVER}/api/message/post-message`,
-          {
-            receiverId: receiverUser?.id,
-            senderId: sender.id,
-            message,
-          }
-        );
-        setMessage("");
-      } catch (e) {
-        console.log(`Error in handleMessageSend ${e}`);
+        try {
+          const res = await axios.post(
+            `${BASE_URL_SERVER}/api/message/post-message`,
+            {
+              receiverId: receiverUser?.id,
+              senderId: sender.id,
+              message,
+            }
+          );
+          setMessage("");
+        } catch (e) {
+          console.log(`Error in handleMessageSend ${e}`);
+        }
       }
     }
   };
@@ -82,7 +83,6 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
         },
       }
     );
-    console.log(res);
     dispatch(
       setSocketMessage({
         type: "file",

@@ -9,12 +9,16 @@ export interface DropdownProps {
   }[];
   openDropdown: boolean;
   setOpenDropdown: (args0: boolean) => void;
+  messageType?: string;
+  messageStatus?: string;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
   options,
   openDropdown,
   setOpenDropdown,
+  messageType,
+  messageStatus,
 }) => {
   useEffect(() => {
     const handleOutsideClick = (e: any) => {
@@ -31,7 +35,17 @@ const Dropdown: React.FC<DropdownProps> = ({
   return (
     <main
       id="dropdown"
-      className="bg-slate-800 z-40 rounded-md absolute py-5 min-w-32 text-neutral-300 bottom-0 right-[-50%] "
+      className={`bg-slate-800 
+      z-50
+      overflow-visible 
+      rounded-md 
+      absolute 
+      py-5 
+      min-w-32 
+      text-neutral-300 
+      ${messageStatus === "received" ? "right-[40%]" : "left-[40%]"}
+      ${messageType === "file" ? "bottom-[10%] right-0  " : "top-[80%]"}
+      `}
     >
       {options.map((option) => (
         <ul key={option.title}>

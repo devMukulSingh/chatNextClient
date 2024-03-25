@@ -20,7 +20,7 @@ export interface IdropdownOptions {
 
 const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
   const router = useRouter();
-  const [messageType, setMessageType] = useState("sent");
+  const [messageStatus, setMessageStatus] = useState("sent");
   const [loading, setLoading] = useState(false);
   const [editMessage, setEditMessage] = useState("");
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -75,7 +75,7 @@ const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
   };
   useEffect(() => {
     if (currentUser.id !== message.senderId) {
-      setMessageType("received");
+      setMessageStatus("received");
     }
   }, []);
   // useEffect(() => {
@@ -91,16 +91,6 @@ const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
   ////////////////////////////////////////////////////////////////////////////////////
   return (
     <>
-      {openDialog && (
-        <Modal
-          onConform={handleEdit}
-          value={editMessage}
-          setValue={setEditMessage}
-          title="Edit message"
-          setOpenDialog={setOpenDialog}
-          loading={loading}
-        />
-      )}
       <main
         className={`
         bg-slate-700
@@ -113,7 +103,8 @@ const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
         gap-8 
         transition 
         ease-in-out
-        ${messageType === "received" && "ml-auto"}   
+        relative
+        ${messageStatus === "received" && "ml-auto"}   
         `}
       >
         <div id="message" className="self-center break-all line-clamp-3 ">
@@ -130,6 +121,8 @@ const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
           />
           {openDropdown && (
             <Dropdown
+              messageType={message.type}
+              messageStatus={messageStatus}
               options={dropdownOptions}
               openDropdown={openDropdown}
               setOpenDropdown={setOpenDropdown}
@@ -137,6 +130,16 @@ const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
           )}
         </section>
       </main>
+      {openDialog && (
+        <Modal
+          onConform={handleEdit}
+          value={editMessage}
+          setValue={setEditMessage}
+          title="Edit message"
+          setOpenDialog={setOpenDialog}
+          loading={loading}
+        />
+      )}
     </>
   );
 };
