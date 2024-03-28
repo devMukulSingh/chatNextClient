@@ -46,7 +46,7 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
   const handleDownload = async () => {
     try {
       await axios.get(
-        `${BASE_URL_SERVER}/api/message/download-file/${message.id}`
+        `${BASE_URL_SERVER}/api/message/download-file/${message.id}`,
       );
     } catch (e) {
       console.log(`Error in handleDownload ${e}`);

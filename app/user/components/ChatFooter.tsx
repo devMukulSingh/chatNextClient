@@ -22,7 +22,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
   const [message, setMessage] = useState("");
   const dispatch = useAppDispatch();
   const sender: IContacts = JSON.parse(
-    localStorage.getItem("currentUser") || "{}"
+    localStorage.getItem("currentUser") || "{}",
   );
 
   const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -39,7 +39,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
           receiverId: receiverUser?.id,
           senderId: sender.id,
           createdAt: Date.now(),
-        })
+        }),
       );
       if (message.length !== 0) {
         socket.current?.emit("send-msg", {
@@ -56,7 +56,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
               receiverId: receiverUser?.id,
               senderId: sender.id,
               message,
-            }
+            },
           );
           setMessage("");
         } catch (e) {
@@ -81,7 +81,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
           receiverId: receiverUser?.id,
           type: "file",
         },
-      }
+      },
     );
     dispatch(
       setSocketMessage({
@@ -90,7 +90,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
         receiverId: receiverUser?.id,
         message: res,
         createdAt: Date.now(),
-      })
+      }),
     );
 
     socket.current?.emit("send-msg", {

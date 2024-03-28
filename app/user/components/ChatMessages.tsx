@@ -33,7 +33,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
       getMessages({
         senderId: currentUser.id,
         receiverId: receiverUser?.id,
-      })
+      }),
     );
   }, [receiverUser]);
 
