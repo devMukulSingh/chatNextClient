@@ -34,12 +34,12 @@ const Button: React.FC<ButtonProps> = ({
           h-10 
           p-4
           rounded-md
-          bg-[#1B1464]
-          hover:bg-[#0652DD]
+          bg-blue-600
+          hover:bg-blue-500
           justify-center
           `,
         `${variant === "ghost" ? "bg-white text-black hover:bg-slate-300" : ""}`,
-        className,
+        className
       )}
     >
       {children}

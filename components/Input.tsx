@@ -1,4 +1,5 @@
 "use client";
+import clsx from "clsx";
 import { UseFormRegister } from "react-hook-form";
 
 type FieldValues = {
@@ -13,6 +14,7 @@ interface InputProps {
   type?: string;
   name: "email" | "password" | "name";
   disabled?: boolean;
+  className?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -21,11 +23,15 @@ const Input: React.FC<InputProps> = ({
   register,
   type,
   disabled,
+  className,
 }) => {
   return (
     <input
       disabled={disabled}
-      className="p-3 focus:outline-none disabled:pointer-events-none "
+      className={clsx(
+        `bg-slate-400 rounded-md p-3 focus:outline-none disabled:pointer-events-none`,
+        className
+      )}
       type={type}
       {...register(name)}
       placeholder={placeholder}

@@ -12,7 +12,8 @@ import { useRouter } from "next/navigation";
 import Error from "./Error";
 import { BASE_URL_SERVER } from "@/lib/BASE_URL";
 import { BASE_URL_CLIENT } from "@/lib/BASE_URL";
-import { useAppDispatch } from "@/redux/hooks";
+
+import { RiLoaderFill } from "react-icons/ri";
 
 export default function Auth() {
   const router = useRouter();
@@ -53,7 +54,7 @@ export default function Auth() {
       if (type === "signup") {
         const res = await axios.post(
           `${BASE_URL_SERVER}/api/auth/add-user`,
-          data,
+          data
         );
         await axios.post(`${BASE_URL_CLIENT}/api/user`, {
           token: res.data.token,
@@ -87,16 +88,20 @@ export default function Auth() {
   };
 
   return (
-    <main className="flex h-screen w-screen justify-center items-center">
-      <section className="flex flex-col gap-5 px-5 py-14 border bg-slate-100 shadow-2xl">
+    <main className="flex h-screen w-screen justify-center items-center bg-slate-950">
+      <section
+        className={`text-white flex flex-col gap-5 w-[23rem] px-10 pb-10 pt-8 ${type === "signup" ? "h-[32rem]" : "h-[28rem]"} bg-slate-800 shadow-2xl rounded-md`}
+      >
         <h1 className="text-2xl font-bold">
           {type === "signin" ? "Signin" : "SignUp"}
         </h1>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="h-full">
+          <div className="flex flex-col gap-2 h-full">
             {type === "signup" && (
               <>
+                <label htmlFor="name">Full name</label>
                 <Input
+                  className=""
                   register={register}
                   name="name"
                   placeholder="Full Name"
@@ -104,6 +109,7 @@ export default function Auth() {
                 <Error error={errors.name?.message} />
               </>
             )}
+            <label htmlFor="email">Email</label>
             <Input
               register={register}
               type="email"
@@ -112,6 +118,8 @@ export default function Auth() {
               disabled={loading}
             />
             <Error error={errors.email?.message} />
+
+            <label htmlFor="password">Password</label>
             <Input
               disabled={loading}
               register={register}
@@ -121,19 +129,26 @@ export default function Auth() {
             />
             <Error error={errors.password?.message} />
 
-            <Button disabled={loading} type="submit">
-              {type === "signin" ? "Signin" : "SignUp"}
-            </Button>
+            <div className="mt-auto flex flex-col gap-5">
+              <Button
+                className="flex gap-3 items-center w-full"
+                disabled={loading}
+                type="submit"
+              >
+                {type === "signin" ? "Signin" : "SignUp"}
+                {loading && <RiLoaderFill size={25} className="animate-spin" />}
+              </Button>
+              <h1
+                onClick={handleToggler}
+                className="hover:underline cursor-pointer text-sm text-neutral-200"
+              >
+                {type === "signin"
+                  ? "New to Messenger? SignUp"
+                  : "Already have an account? Signin"}
+              </h1>
+            </div>
           </div>
         </form>
-        <h1
-          onClick={handleToggler}
-          className="hover:underline cursor-pointer text-sm text-neutral-500"
-        >
-          {type === "signin"
-            ? "New to Messenger? SignUp"
-            : "Already have an account? Signin"}
-        </h1>
       </section>
     </main>
   );
