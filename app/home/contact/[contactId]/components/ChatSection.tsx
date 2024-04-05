@@ -18,7 +18,6 @@ const ChatSection = () => {
   useEffect(() => {
     socket.current = io(BASE_URL_SERVER);
     socket.current.emit("add-user", currentUser.id);
-    socket.current?.emit("add-user", receiverUser?.id);
     return () => {
       socket.current?.off("add-user");
     };
@@ -27,7 +26,6 @@ const ChatSection = () => {
   useEffect(() => {
     socket.current?.on("receive-msg", (message) => {
       dispatch(setSocketMessage(message));
-      console.log("socket event triggered");
     });
 
     return () => {

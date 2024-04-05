@@ -3,19 +3,19 @@ import SingleMessage from "./SingleMessage";
 import { useEffect, useRef, useState } from "react";
 import { getMessages } from "@/redux/reducers/getMessages";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import EmptyMessage from "../../../components/commons/EmptyMessage";
+import EmptyMessage from "../../../components/EmptyMessage";
 import { Socket } from "socket.io-client";
-import { setSocketMessage } from "@/redux/chatSlice";
+import { setMessages, setSocketMessage } from "@/redux/chatSlice";
 import FileMessage from "./FileMessage";
 import axios from "axios";
 import useSWR, { SWRConfig } from "swr";
+import { BASE_URL_SERVER } from "@/lib/BASE_URL";
 interface ChatMessagesProps {
   receiverUser: IContacts | null;
   socket: {
     current: Socket | null;
   };
 }
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 const ChatMessages: React.FC<ChatMessagesProps> = ({
   receiverUser,
@@ -25,11 +25,12 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
   const messages = useAppSelector((state) => state.chatSlice.messages);
   const mainComponent = useRef<HTMLDivElement>(null);
-  //  const { data, error } = useSWR("/api/data", fetcher);
+
   useEffect(() => {
     const componentHeight = mainComponent.current?.scrollHeight;
     mainComponent.current?.scrollTo(0, componentHeight || 0);
   }, [receiverUser, messages]);
+
   useEffect(() => {
     dispatch(
       getMessages({
@@ -38,7 +39,6 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
       })
     );
   }, [receiverUser]);
-
   return (
     <main
       className="flex flex-col gap-2 py-5 px-20 overflow-auto"
@@ -47,8 +47,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
       {messages?.length === 0 ? (
         <EmptyMessage />
       ) : (
-        messages?.map((message) => {
-          if (message.type === "file") return <FileMessage message={message} />;
+        messages?.map((message: IMessage) => {
+          if (message.type === "file") return <FileMessage key={message.id} message={message} />;
           return <SingleMessage message={message} key={message.id} />;
         })
       )}

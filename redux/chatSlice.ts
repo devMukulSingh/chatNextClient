@@ -29,6 +29,9 @@ const chatSlice = createSlice({
     setSocketMessage: (state, action) => {
       state.messages?.push(action.payload);
     },
+    setMessages : (state,action) => {
+      state.messages = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(getMessages.fulfilled, (state, action) => {
@@ -45,4 +48,5 @@ export const {
   setOpenDialog,
   setSocket,
   setSocketMessage,
+  setMessages
 } = chatSlice.actions;

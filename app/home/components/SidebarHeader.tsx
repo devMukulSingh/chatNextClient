@@ -5,7 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { LuLogOut } from "react-icons/lu";
-import SearchBar from "./commons/SearchBar";
+import SearchBar from "./SearchBar";
 
 const SidebarHeader = () => {
   const router = useRouter();

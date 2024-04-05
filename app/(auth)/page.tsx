@@ -54,13 +54,13 @@ export default function Auth() {
       if (type === "signup") {
         const res = await axios.post(
           `${BASE_URL_SERVER}/api/auth/add-user`,
-          data
+          data,
         );
         await axios.post(`${BASE_URL_CLIENT}/api/user`, {
           token: res.data.token,
         });
-        router.push(`/home`);
         localStorage.setItem("currentUser", JSON.stringify(res.data));
+        router.push(`/home`);
       } else if (type === "signin") {
         const res = await axios.get(`${BASE_URL_SERVER}/api/auth/check-user`, {
           params: data,
@@ -141,7 +141,7 @@ export default function Auth() {
               <h1
                 aria-disabled={loading}
                 onClick={handleToggler}
-                className={`${loading ? 'pointer-events-none opacity-30':''} hover:underline cursor-pointer text-sm text-neutral-200`}
+                className={`${loading ? "pointer-events-none opacity-30" : ""} hover:underline cursor-pointer text-sm text-neutral-200`}
               >
                 {type === "signin"
                   ? "New to Messenger? SignUp"
