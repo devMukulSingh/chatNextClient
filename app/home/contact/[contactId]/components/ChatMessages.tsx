@@ -32,12 +32,14 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   }, [receiverUser, messages]);
 
   useEffect(() => {
-    dispatch(
-      getMessages({
-        senderId: currentUser.id,
-        receiverId: receiverUser?.id,
-      })
-    );
+    if(receiverUser){
+      dispatch(
+        getMessages({
+          senderId: currentUser.id,
+          receiverId: receiverUser?.id,
+        }),
+        );
+      }
   }, [receiverUser]);
   return (
     <main
@@ -48,7 +50,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
         <EmptyMessage />
       ) : (
         messages?.map((message: IMessage) => {
-          if (message.type === "file") return <FileMessage key={message.id} message={message} />;
+          if (message.type === "file")
+            return <FileMessage key={message.id} message={message} />;
           return <SingleMessage message={message} key={message.id} />;
         })
       )}

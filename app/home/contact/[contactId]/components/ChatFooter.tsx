@@ -33,7 +33,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
 
   const handleMessageSend = async () => {
     const currentMessage = message;
-          setMessage("");
+    setMessage("");
     if (currentMessage !== "") {
       dispatch(
         setSocketMessage({
@@ -41,7 +41,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
           receiverId: receiverUser?.id,
           senderId: sender.id,
           createdAt: Date.now(),
-        })
+        }),
       );
       if (message !== "") {
         socket.current?.emit("send-msg", {
@@ -58,7 +58,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
               receiverId: receiverUser?.id,
               senderId: sender.id,
               message: currentMessage,
-            }
+            },
           );
         } catch (e) {
           console.log(`Error in handleMessageSend ${e}`);
