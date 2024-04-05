@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import SearchBar from "./commons/SearchBar";
+import SearchBar from "../../../components/commons/SearchBar";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { IContacts } from "@/lib/types";
 

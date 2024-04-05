@@ -59,7 +59,7 @@ export default function Auth() {
         await axios.post(`${BASE_URL_CLIENT}/api/user`, {
           token: res.data.token,
         });
-        router.push(`/user/${res.data.id}`);
+        router.push(`/home`);
         localStorage.setItem("currentUser", JSON.stringify(res.data));
       } else if (type === "signin") {
         const res = await axios.get(`${BASE_URL_SERVER}/api/auth/check-user`, {
@@ -68,7 +68,7 @@ export default function Auth() {
         await axios.post(`${BASE_URL_CLIENT}/api/user`, {
           token: res.data.token,
         });
-        router.push(`/user/${res.data.id}`);
+        router.push(`/home`);
         localStorage.setItem("currentUser", JSON.stringify(res.data));
       }
     } catch (e) {
@@ -139,8 +139,9 @@ export default function Auth() {
                 {loading && <RiLoaderFill size={25} className="animate-spin" />}
               </Button>
               <h1
+                aria-disabled={loading}
                 onClick={handleToggler}
-                className="hover:underline cursor-pointer text-sm text-neutral-200"
+                className={`${loading ? 'pointer-events-none opacity-30':''} hover:underline cursor-pointer text-sm text-neutral-200`}
               >
                 {type === "signin"
                   ? "New to Messenger? SignUp"

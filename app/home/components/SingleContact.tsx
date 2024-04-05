@@ -1,8 +1,9 @@
 "use client";
 import { IContacts } from "@/lib/types";
 import { setReceiverUser } from "@/redux/chatSlice";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface SingleContactProps {
   contact: IContacts;
@@ -11,16 +12,32 @@ interface SingleContactProps {
 const SingleContact: React.FC<SingleContactProps> = ({ contact }) => {
   const image =
     "https://lh3.googleusercontent.com/a/ACg8ocKpWZffOwLfdPRCRKfFYdW36Fnda6Zo_jKH3AOYWvf3FA=s360-c-no";
-
+  const router = useRouter();
   const dispatch = useAppDispatch();
+  const selected = useAppSelector((state) => state.chatSlice.receiverUser);
 
   const handleClick = () => {
+    router.push(`/home/contact/${contact.id}`);
     dispatch(setReceiverUser(contact));
   };
   return (
     <main
       onClick={handleClick}
-      className="w-full flex hover:bg-slate-800 rounded-lg gap-5 px-5 py-5 cursor-pointer shadow-slate-700 shadow-md"
+      className={`
+      ${selected?.id === contact.id ? "bg-slate-700 shadow-none rounded-none" : ""} 
+        w-full 
+        flex
+         hover:bg-slate-700 
+         hover:shadow-none 
+         rounded-lg 
+         hover:rounded-none
+         gap-5 
+         px-5 
+         py-5 
+         cursor-pointer 
+         shadow-slate-700 
+         shadow-md
+         `}
     >
       <figure className="relative size-10">
         <Image src={image} alt="profileimage" fill className="rounded-full" />

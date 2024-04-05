@@ -39,7 +39,7 @@ const Button: React.FC<ButtonProps> = ({
           justify-center
           `,
         `${variant === "ghost" ? "bg-white text-black hover:bg-slate-300" : ""}`,
-        className
+        className,
       )}
     >
       {children}

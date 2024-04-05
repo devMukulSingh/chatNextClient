@@ -30,7 +30,7 @@ const Input: React.FC<InputProps> = ({
       disabled={disabled}
       className={clsx(
         `bg-slate-400 rounded-md p-3 focus:outline-none disabled:pointer-events-none`,
-        className
+        className,
       )}
       type={type}
       {...register(name)}

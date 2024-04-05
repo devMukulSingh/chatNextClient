@@ -1,7 +1,6 @@
-import Sidebar from "../components/Sidebar";
-import ChatSection from "../components/ChatSection";
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/actions/isAuthenticated";
+import EmptyChat from "./contact/components/EmptyChat";
 
 const UsersPage = async ({ params }: { params: { userId: string } }) => {
   const res = await isAuthenticated();
@@ -9,9 +8,8 @@ const UsersPage = async ({ params }: { params: { userId: string } }) => {
   if (!res) redirect("/");
 
   return (
-    <main className="bg-slate-900 h-screen text-white flex ">
-      <Sidebar />
-      <ChatSection />
+    <main className="flex w-[calc(100vw-30rem)]">
+      <EmptyChat />
     </main>
   );
 };

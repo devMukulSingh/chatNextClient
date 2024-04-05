@@ -3,7 +3,7 @@ import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatFooter from "./ChatFooter";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import EmptyChat from "./EmptyChat";
+import EmptyChat from "../../components/EmptyChat";
 import { BASE_URL_SERVER } from "@/lib/BASE_URL";
 import { Socket, io } from "socket.io-client";
 import { useCallback, useEffect, useRef } from "react";
@@ -37,15 +37,11 @@ const ChatSection = () => {
 
   return (
     <>
-      {receiverUser && Object.keys(receiverUser).length > 0 ? (
-        <main className="w-full h-full flex flex-col">
-          <ChatHeader receiverUser={receiverUser} />
-          <ChatMessages receiverUser={receiverUser} socket={socket} />
-          <ChatFooter receiverUser={receiverUser} socket={socket} />
-        </main>
-      ) : (
-        <EmptyChat />
-      )}
+      <main className="w-full h-screen flex flex-col">
+        <ChatHeader receiverUser={receiverUser} />
+        <ChatMessages receiverUser={receiverUser} socket={socket} />
+        <ChatFooter receiverUser={receiverUser} socket={socket} />
+      </main>
     </>
   );
 };

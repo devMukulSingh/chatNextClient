@@ -6,4 +6,4 @@ export const BASE_URL_SERVER =
 export const BASE_URL_CLIENT =
   process.env.NODE_ENV === "production"
     ? "https://chat-next-client.vercel.app"
-    : `http://localhost:3000`;
+    : `http://localhost:3001`;
