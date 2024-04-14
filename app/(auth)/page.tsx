@@ -24,11 +24,11 @@ export default function Auth() {
     email: z.string().email({
       message: "Enter enter valid email",
     }),
-    password: z.string().min(6, {
+    password: z.string().trim().min(6, {
       message: "Password must be minimum 6 characters",
     }),
     name: z
-      .string()
+      .string().trim()
       .min(3, {
         message: "Name must be min 3 characters",
       })
@@ -48,24 +48,18 @@ export default function Auth() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FieldValues> = async (data: FieldValues) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (data:FieldValues) => {
     try {
       setLoading(true);
       if (type === "signup") {
-        const res = await axios.post(
-          `${BASE_URL_SERVER}/api/auth/add-user`,
-          data,
-        );
-        await axios.post(`${BASE_URL_CLIENT}/api/user`, {
-          token: res.data.token,
-        });
-        localStorage.setItem("currentUser", JSON.stringify(res.data));
-        router.push(`/home`);
+        await axios.post(`${BASE_URL_SERVER}/api/auth/send-otp`,data);
+        router.push(`/verify-otp?email=${data.email}`);
+
       } else if (type === "signin") {
         const res = await axios.get(`${BASE_URL_SERVER}/api/auth/check-user`, {
           params: data,
         });
-        await axios.post(`${BASE_URL_CLIENT}/api/user`, {
+        await axios.post(`/api/user`, {
           token: res.data.token,
         });
         router.push(`/home`);
@@ -95,7 +89,7 @@ export default function Auth() {
         <h1 className="text-2xl font-bold">
           {type === "signin" ? "Signin" : "SignUp"}
         </h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="h-full">
+        <form  onSubmit={handleSubmit(onSubmit)} className="h-full">
           <div className="flex flex-col gap-2 h-full">
             {type === "signup" && (
               <>

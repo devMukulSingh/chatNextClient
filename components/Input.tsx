@@ -6,13 +6,14 @@ type FieldValues = {
   email: string;
   password: string;
   name?: string;
+  otp?:number
 };
 
 interface InputProps {
   placeholder?: string;
   register: UseFormRegister<FieldValues>;
   type?: string;
-  name: "email" | "password" | "name";
+  name: "email" | "password" | "name" | "otp";
   disabled?: boolean;
   className?: string;
 }
