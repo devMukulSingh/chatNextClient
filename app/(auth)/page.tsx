@@ -14,11 +14,13 @@ import { BASE_URL_SERVER } from "@/lib/BASE_URL";
 import { BASE_URL_CLIENT } from "@/lib/BASE_URL";
 
 import { RiLoaderFill } from "react-icons/ri";
+import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 
 export default function Auth() {
   const router = useRouter();
   const [type, setType] = useState("signin");
   const [loading, setLoading] = useState(false);
+  const [inputType, setInputType] = useState("password");
 
   const schema = z.object({
     email: z.string().email({
@@ -28,7 +30,8 @@ export default function Auth() {
       message: "Password must be minimum 6 characters",
     }),
     name: z
-      .string().trim()
+      .string()
+      .trim()
       .min(3, {
         message: "Name must be min 3 characters",
       })
@@ -48,13 +51,12 @@ export default function Auth() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FieldValues> = async (data:FieldValues) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (data: FieldValues) => {
     try {
       setLoading(true);
       if (type === "signup") {
-        await axios.post(`${BASE_URL_SERVER}/api/auth/send-otp`,data);
+        await axios.post(`${BASE_URL_SERVER}/api/auth/send-otp`, data);
         router.push(`/verify-otp?email=${data.email}`);
-
       } else if (type === "signin") {
         const res = await axios.get(`${BASE_URL_SERVER}/api/auth/check-user`, {
           params: data,
@@ -80,7 +82,9 @@ export default function Auth() {
       setType("signin");
     }
   };
-
+  const toggleShowPassword = () => {
+    inputType === 'password' ? setInputType('text') : setInputType('password') 
+  }
   return (
     <main className="flex h-screen w-screen justify-center items-center bg-slate-950">
       <section
@@ -89,7 +93,7 @@ export default function Auth() {
         <h1 className="text-2xl font-bold">
           {type === "signin" ? "Signin" : "SignUp"}
         </h1>
-        <form  onSubmit={handleSubmit(onSubmit)} className="h-full">
+        <form onSubmit={handleSubmit(onSubmit)} className="h-full">
           <div className="flex flex-col gap-2 h-full">
             {type === "signup" && (
               <>
@@ -114,13 +118,20 @@ export default function Auth() {
             <Error error={errors.email?.message} />
 
             <label htmlFor="password">Password</label>
-            <Input
-              disabled={loading}
-              register={register}
-              type="password"
-              name="password"
-              placeholder="Enter password"
-            />
+            <div className="flex items-center pr-5 justify-between bg-slate-400 w-full rounded-md">
+              <Input
+                disabled={loading}
+                register={register}
+                type={inputType}
+                name="password"
+                placeholder="Enter password"
+              />
+              {inputType === "password" ? (
+                <BiSolidShow size={25} onClick={toggleShowPassword} />
+              ) : (
+                <BiSolidHide size={25} onClick={toggleShowPassword} />
+              )}
+            </div>
             <Error error={errors.password?.message} />
 
             <div className="mt-auto flex flex-col gap-5">

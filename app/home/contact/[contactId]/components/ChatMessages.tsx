@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { IContacts, IMessage } from "@/lib/types";
 import SingleMessage from "./SingleMessage";
 import { useEffect, useRef, useState } from "react";
@@ -24,7 +24,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
-  
+
   const messages = useAppSelector((state) => state.chatSlice.messages);
   const mainComponent = useRef<HTMLDivElement>(null);
 

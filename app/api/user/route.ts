@@ -13,7 +13,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     return response;
   } catch (e) {
     console.log(`error in SetToken POST req ${e}`);
-    return NextResponse.json(e,{status:500});
+    return NextResponse.json(e, { status: 500 });
   }
 }
 
@@ -25,6 +25,5 @@ export async function GET(req: NextRequest, res: NextResponse) {
   } catch (e) {
     console.log(`Error in GET logout ${e}`);
     return NextResponse.json(e, { status: 500 });
-
   }
 }

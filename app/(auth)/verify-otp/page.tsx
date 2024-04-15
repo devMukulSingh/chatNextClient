@@ -8,15 +8,15 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import useSWRMutation from "swr/mutation";
 
-async function sendRequest (
+async function sendRequest(
   url: string,
-  { arg }: { arg: { email: string; otp: string } }
+  { arg }: { arg: { email: string; otp: string } },
 ) {
   return await axios.patch(url, {
     email: arg.email,
     otp: arg.otp,
   });
-};
+}
 
 const VerifyPage = () => {
   const router = useRouter();
@@ -24,7 +24,7 @@ const VerifyPage = () => {
   const [otp, setOtp] = useState("");
   const { trigger, isMutating } = useSWRMutation(
     `${BASE_URL_SERVER}/api/auth/verify-otp`,
-    sendRequest
+    sendRequest,
   );
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
@@ -32,8 +32,8 @@ const VerifyPage = () => {
       const res = await trigger({ email, otp });
       toast.success("Otp verified successfully");
       await axios.post(`/api/user`, {
-        token:res.data.token
-    });
+        token: res.data.token,
+      });
       localStorage.setItem("currentUser", JSON.stringify(res.data));
       router.push(`/home`);
     } catch (e: any) {

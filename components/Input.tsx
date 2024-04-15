@@ -6,7 +6,7 @@ type FieldValues = {
   email: string;
   password: string;
   name?: string;
-  otp?:number
+  otp?: number;
 };
 
 interface InputProps {
