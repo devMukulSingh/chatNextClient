@@ -1,5 +1,6 @@
 "use client";
 
+import clsx from "clsx";
 import { useEffect } from "react";
 
 export interface DropdownProps {
@@ -11,6 +12,7 @@ export interface DropdownProps {
   setOpenDropdown: (args0: boolean) => void;
   messageType?: string;
   messageStatus?: string;
+  className?:string
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -19,10 +21,15 @@ const Dropdown: React.FC<DropdownProps> = ({
   setOpenDropdown,
   messageType,
   messageStatus,
+  className
 }) => {
   useEffect(() => {
     const handleOutsideClick = (e: any) => {
-      if (e.target.id !== "dropdown" && e.target.id !== "dropdownButton") {
+      if (
+        e.target.id !== "dropdown" &&
+        e.target.id !== "dropdownButton" &&
+        e.target.id !== "imageUploder"
+      ) {
         setOpenDropdown(false);
       }
     };
@@ -33,32 +40,48 @@ const Dropdown: React.FC<DropdownProps> = ({
     };
   }, []);
   return (
-    <main
+    <>
+    {
+      openDropdown &&
+      <div
       id="dropdown"
-      className={`bg-slate-800 
+      className={clsx(`bg-slate-800 
       z-50
       overflow-visible 
       rounded-md 
       absolute 
       py-5 
-      min-w-32 
-      text-neutral-300 
+      min-w-32
+      
+      text-neutral-300
       ${messageStatus === "received" ? "right-[40%]" : "left-[40%]"}
       ${messageType === "file" ? "bottom-[10%] right-0  " : "top-[80%]"}
-      `}
-    >
+      `,className)}
+      >
       {options.map((option) => (
         <ul key={option.title}>
-          <li
-            onClick={option.onClick}
-            className="cursor-pointer hover:bg-slate-900 h-10 w-full px-5"
-          >
-            {option.title}
-          </li>
-        </ul>
-      ))}
-    </main>
+              <li
+                onClick={option.onClick}
+                className="
+                flex 
+                items-center 
+                cursor-pointer 
+                hover:bg-slate-900 
+                h-10 
+                w-full 
+                px-5"
+              >
+                {option.title}
+              </li>
+            </ul>
+          ))}
+        </div>
+      
+      }
+        
+      </>
   );
+
 };
 
 export default Dropdown;

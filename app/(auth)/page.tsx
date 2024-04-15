@@ -1,5 +1,5 @@
 "use client";
-import { FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,47 +11,57 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Error from "./Error";
 import { BASE_URL_SERVER } from "@/lib/BASE_URL";
-import { BASE_URL_CLIENT } from "@/lib/BASE_URL";
-
 import { RiLoaderFill } from "react-icons/ri";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
+import ImageField from "./components/ImageField";
+// import { authSchema } from "@/lib/formSchemas";
 
 export default function Auth() {
   const router = useRouter();
   const [type, setType] = useState("signin");
   const [loading, setLoading] = useState(false);
   const [inputType, setInputType] = useState("password");
+  const MAX_FILE_SIZE = 5000000;
 
-  const schema = z.object({
-    email: z.string().email({
-      message: "Enter enter valid email",
-    }),
-    password: z.string().trim().min(6, {
-      message: "Password must be minimum 6 characters",
-    }),
-    name: z
-      .string()
-      .trim()
-      .min(3, {
-        message: "Name must be min 3 characters",
-      })
-      .max(30, {
-        message: "Name must be max 30 characters",
-      })
-      .optional(),
+function checkFileType(file: File) {
+  if (file.type.includes("image")) return true;
+  return false;
+}
+
+ const authSchema = z.object({
+   email: z.string().email({
+     message: "Enter enter valid email",
+   }),
+   password: z.string().trim().min(6, {
+     message: "Password must be minimum 6 characters",
+   }),
+   profileImage: z
+     .any({
+       required_error: "Image is required",
+     })
+     .refine((file) => {
+       if (type === "signin") {
+         return true;
+       }
+       if (file.size > MAX_FILE_SIZE) {
+         return true;
+       }
+     }),
+   // .refine((file) => checkFileType(file), "Only images are supported."),
+   name: z.string().optional(),
+ });
+  type formSchema = z.infer<typeof authSchema>;
+  const form = useForm<formSchema>({
+    resolver: zodResolver(authSchema),
   });
-
-  type formSchema = z.infer<typeof schema>;
-
   const {
+    getValues,
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<formSchema>({
-    resolver: zodResolver(schema),
-  });
+  } = form;
 
-  const onSubmit: SubmitHandler<FieldValues> = async (data: FieldValues) => {
+  const onSubmit: SubmitHandler<formSchema> = async (data: formSchema) => {
     try {
       setLoading(true);
       if (type === "signup") {
@@ -83,75 +93,87 @@ export default function Auth() {
     }
   };
   const toggleShowPassword = () => {
-    inputType === 'password' ? setInputType('text') : setInputType('password') 
-  }
+    inputType === "password" ? setInputType("text") : setInputType("password");
+  };
+  
   return (
     <main className="flex h-screen w-screen justify-center items-center bg-slate-950">
       <section
-        className={`text-white flex flex-col gap-5 w-[23rem] px-10 pb-10 pt-8 ${type === "signup" ? "h-[32rem]" : "h-[28rem]"} bg-slate-800 shadow-2xl rounded-md`}
+        className={`text-white flex flex-col gap-5 min-w-[23rem] px-10 pb-10 pt-8 ${type === "signup" ? "h-[32rem]" : "h-[28rem]"} bg-slate-800 shadow-2xl rounded-md`}
       >
         <h1 className="text-2xl font-bold">
           {type === "signin" ? "Signin" : "SignUp"}
         </h1>
         <form onSubmit={handleSubmit(onSubmit)} className="h-full">
-          <div className="flex flex-col gap-2 h-full">
-            {type === "signup" && (
-              <>
-                <label htmlFor="name">Full name</label>
-                <Input
-                  className=""
-                  register={register}
-                  name="name"
-                  placeholder="Full Name"
-                />
-                <Error error={errors.name?.message} />
-              </>
-            )}
-            <label htmlFor="email">Email</label>
-            <Input
-              register={register}
-              type="email"
-              name="email"
-              placeholder="Enter email"
-              disabled={loading}
-            />
-            <Error error={errors.email?.message} />
-
-            <label htmlFor="password">Password</label>
-            <div className="flex items-center pr-5 justify-between bg-slate-400 w-full rounded-md">
-              <Input
-                disabled={loading}
-                register={register}
-                type={inputType}
-                name="password"
-                placeholder="Enter password"
-              />
-              {inputType === "password" ? (
-                <BiSolidShow size={25} onClick={toggleShowPassword} />
-              ) : (
-                <BiSolidHide size={25} onClick={toggleShowPassword} />
+          <div className="flex gap-5 h-full">
+            {type === "signup" && <ImageField form={form} />}
+            <div className="flex flex-col gap-2 h-full">
+              {type === "signup" && (
+                <>
+                  <label htmlFor="name">Full name</label>
+                  <Input
+                    className=""
+                    register={register}
+                    name="name"
+                    placeholder="Full Name"
+                  />
+                  <Error error={errors.name?.message} />
+                </>
               )}
-            </div>
-            <Error error={errors.password?.message} />
-
-            <div className="mt-auto flex flex-col gap-5">
-              <Button
-                className="flex gap-3 items-center w-full"
+              <label htmlFor="email">Email</label>
+              <Input
+                register={register}
+                type="email"
+                name="email"
+                placeholder="Enter email"
                 disabled={loading}
-                type="submit"
-              >
-                {type === "signin" ? "Signin" : "SignUp"}
-                {loading && <RiLoaderFill size={25} className="animate-spin" />}
-              </Button>
-              <h1
-                aria-disabled={loading}
-                onClick={handleToggler}
-                className={`${loading ? "pointer-events-none opacity-30" : ""} hover:underline cursor-pointer text-sm text-neutral-200`}
-              >
-                {type === "signin"
-                  ? "New to Messenger? SignUp"
-                  : "Already have an account? Signin"}
-              </h1>
+              />
+              <Error error={errors.email?.message} />
+
+              <label htmlFor="password">Password</label>
+              <div className="flex items-center pr-5 justify-between bg-slate-400 w-full rounded-md">
+                <Input
+                  disabled={loading}
+                  register={register}
+                  type={inputType}
+                  name="password"
+                  placeholder="Enter password"
+                />
+                {inputType === "password" ? (
+                  <BiSolidShow size={25} onClick={toggleShowPassword} />
+                ) : (
+                  <BiSolidHide size={25} onClick={toggleShowPassword} />
+                )}
+              </div>
+              <Error error={errors.password?.message} />
+
+              <div className="mt-auto flex flex-col gap-5">
+                <Button
+                  className="flex gap-3 items-center w-full"
+                  disabled={loading}
+                  type="submit"
+                >
+                  {type === "signin" ? "Signin" : "SignUp"}
+                  {loading && (
+                    <RiLoaderFill size={25} className="animate-spin" />
+                  )}
+                </Button>
+                <h1
+                  aria-disabled={loading}
+                  onClick={handleToggler}
+                  className={
+                  `${loading ? 
+                    "pointer-events-none opacity-30" : ""} 
+                    hover:underline 
+                    cursor-pointer 
+                    text-sm 
+                    text-neutral-200`}
+                >
+                  {type === "signin"
+                    ? "New to Messenger? SignUp"
+                    : "Already have an account? Signin"}
+                </h1>
+              </div>
             </div>
           </div>
         </form>

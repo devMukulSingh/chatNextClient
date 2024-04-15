@@ -45,7 +45,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   }, [receiverUser]);
   return (
     <main
-      className="flex flex-col gap-2 py-5 px-20 overflow-auto"
+      className="flex flex-col gap-2 py-5 px-20 overflow-auto h-full  "
       ref={mainComponent}
     >
       {messages?.length === 0 ? (
