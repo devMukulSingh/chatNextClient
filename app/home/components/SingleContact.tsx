@@ -10,8 +10,7 @@ interface SingleContactProps {
 }
 
 const SingleContact: React.FC<SingleContactProps> = ({ contact }) => {
-  const image =
-    "https://lh3.googleusercontent.com/a/ACg8ocKpWZffOwLfdPRCRKfFYdW36Fnda6Zo_jKH3AOYWvf3FA=s360-c-no";
+  const receiverProfileImg = contact?.profileImage || "/blankProfilePic.png";
   const router = useRouter();
   const dispatch = useAppDispatch();
   const selected = useAppSelector((state) => state.chatSlice.receiverUser);
@@ -40,7 +39,12 @@ const SingleContact: React.FC<SingleContactProps> = ({ contact }) => {
          `}
     >
       <figure className="relative size-10">
-        <Image src={image} alt="profileimage" fill className="rounded-full" />
+        <Image
+          src={receiverProfileImg}
+          alt="profileimage"
+          fill
+          className="rounded-full"
+        />
       </figure>
       <section>
         <h1 className="text-lg">{contact.name}</h1>

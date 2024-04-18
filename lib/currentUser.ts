@@ -1,3 +1,4 @@
+"use client"
 import { IContacts } from "./types";
 
 export const currentUser: IContacts =

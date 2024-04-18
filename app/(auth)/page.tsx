@@ -21,35 +21,24 @@ export default function Auth() {
   const [type, setType] = useState("signin");
   const [loading, setLoading] = useState(false);
   const [inputType, setInputType] = useState("password");
-  const MAX_FILE_SIZE = 5000000;
 
-function checkFileType(file: File) {
-  if (file.type.includes("image")) return true;
-  return false;
-}
+  function checkFileType(file: File) {
+    if (file.type.includes("image")) return true;
+    return false;
+  }
 
- const authSchema = z.object({
-   email: z.string().email({
-     message: "Enter enter valid email",
-   }),
-   password: z.string().trim().min(6, {
-     message: "Password must be minimum 6 characters",
-   }),
-   profileImage: z
-     .any({
-       required_error: "Image is required",
-     })
-     .refine((file) => {
-       if (type === "signin") {
-         return true;
-       }
-       if (file.size > MAX_FILE_SIZE) {
-         return true;
-       }
-     }),
-   // .refine((file) => checkFileType(file), "Only images are supported."),
-   name: z.string().optional(),
- });
+  const authSchema = z.object({
+    email: z.string().email({
+      message: "Enter enter valid email",
+    }),
+    password: z.string().trim().min(6, {
+      message: "Password must be minimum 6 characters",
+    }),
+    profileImage: z
+      .any()
+    .optional(),
+    name: z.string().optional(),
+  });
   type formSchema = z.infer<typeof authSchema>;
   const form = useForm<formSchema>({
     resolver: zodResolver(authSchema),
@@ -62,10 +51,19 @@ function checkFileType(file: File) {
   } = form;
 
   const onSubmit: SubmitHandler<formSchema> = async (data: formSchema) => {
+    
     try {
       setLoading(true);
       if (type === "signup") {
-        await axios.post(`${BASE_URL_SERVER}/api/auth/send-otp`, data);
+        const formData = new FormData();
+        formData.append("profilImage",data.profileImage)
+        await axios.post(`${BASE_URL_SERVER}/api/auth/send-otp`, formData,{
+          params:{
+            name:data.name,
+            email:data.email,
+            password:data.password
+          }
+        });
         router.push(`/verify-otp?email=${data.email}`);
       } else if (type === "signin") {
         const res = await axios.get(`${BASE_URL_SERVER}/api/auth/check-user`, {
@@ -95,7 +93,7 @@ function checkFileType(file: File) {
   const toggleShowPassword = () => {
     inputType === "password" ? setInputType("text") : setInputType("password");
   };
-  
+
   return (
     <main className="flex h-screen w-screen justify-center items-center bg-slate-950">
       <section
@@ -161,9 +159,9 @@ function checkFileType(file: File) {
                 <h1
                   aria-disabled={loading}
                   onClick={handleToggler}
-                  className={
-                  `${loading ? 
-                    "pointer-events-none opacity-30" : ""} 
+                  className={`${
+                    loading ? "pointer-events-none opacity-30" : ""
+                  } 
                     hover:underline 
                     cursor-pointer 
                     text-sm 

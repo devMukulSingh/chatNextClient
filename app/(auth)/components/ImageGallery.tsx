@@ -11,8 +11,8 @@ interface ImageGalleryProps {
   setProfileImg: (image: string) => void;
   openLibrary: boolean;
   setOpenLibrary: (arg0: boolean) => void;
-  setShowImg : (arg0:boolean) => void;
-  form?:UseFormReturn<FieldValues>
+  setShowImg: (arg0: boolean) => void;
+  form?: UseFormReturn<FieldValues>;
 }
 
 const ImageGallery: FC<ImageGalleryProps> = ({
@@ -20,14 +20,15 @@ const ImageGallery: FC<ImageGalleryProps> = ({
   openLibrary,
   setOpenLibrary,
   setShowImg,
-  form
+  form,
 }) => {
   const handleImageSelect = (image: string) => {
     setProfileImg(image);
-    form?.setValue('profileImage',image);
+    form?.setValue("profileImage", image);
     setShowImg(true);
     setOpenLibrary(false);
   };
+  
   return (
     <Portal>
       {openLibrary && (
@@ -62,7 +63,7 @@ const ImageGallery: FC<ImageGalleryProps> = ({
             lg:grid-cols-6 
             md:grid-cols-4"
             >
-              {images.map((image: string,index) => (
+              {images.map((image: string, index) => (
                 <figure
                   key={index}
                   className="

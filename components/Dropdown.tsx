@@ -12,7 +12,7 @@ export interface DropdownProps {
   setOpenDropdown: (args0: boolean) => void;
   messageType?: string;
   messageStatus?: string;
-  className?:string
+  className?: string;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -21,14 +21,15 @@ const Dropdown: React.FC<DropdownProps> = ({
   setOpenDropdown,
   messageType,
   messageStatus,
-  className
+  className,
 }) => {
   useEffect(() => {
     const handleOutsideClick = (e: any) => {
       if (
         e.target.id !== "dropdown" &&
         e.target.id !== "dropdownButton" &&
-        e.target.id !== "imageUploder"
+        e.target.id !== "imageUploder" &&
+        e.target.id!=="image"
       ) {
         setOpenDropdown(false);
       }
@@ -41,11 +42,11 @@ const Dropdown: React.FC<DropdownProps> = ({
   }, []);
   return (
     <>
-    {
-      openDropdown &&
-      <div
-      id="dropdown"
-      className={clsx(`bg-slate-800 
+      {openDropdown && (
+        <div
+          id="dropdown"
+          className={clsx(
+            `bg-slate-800 
       z-50
       overflow-visible 
       rounded-md 
@@ -56,10 +57,12 @@ const Dropdown: React.FC<DropdownProps> = ({
       text-neutral-300
       ${messageStatus === "received" ? "right-[40%]" : "left-[40%]"}
       ${messageType === "file" ? "bottom-[10%] right-0  " : "top-[80%]"}
-      `,className)}
-      >
-      {options.map((option) => (
-        <ul key={option.title}>
+      `,
+            className,
+          )}
+        >
+          {options.map((option) => (
+            <ul key={option.title}>
               <li
                 onClick={option.onClick}
                 className="
@@ -76,12 +79,9 @@ const Dropdown: React.FC<DropdownProps> = ({
             </ul>
           ))}
         </div>
-      
-      }
-        
-      </>
+      )}
+    </>
   );
-
 };
 
 export default Dropdown;

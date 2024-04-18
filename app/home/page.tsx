@@ -5,7 +5,7 @@ import EmptyChat from "./contact/components/EmptyChat";
 const UsersPage = async ({ params }: { params: { userId: string } }) => {
   const res = await isAuthenticated();
 
-  if (!res) redirect("/");
+  // if (!res) redirect("/");
 
   return (
     <main className="flex w-[calc(100vw-30rem)]">

@@ -15,7 +15,8 @@ async function sendRequest(
   return await axios.patch(url, {
     email: arg.email,
     otp: arg.otp,
-  });
+  }
+);
 }
 
 const VerifyPage = () => {

@@ -4,6 +4,7 @@ export interface IContacts {
   name: string;
   email: string;
   id: string;
+  profileImage? : string
 }
 
 export interface IInitialState {
