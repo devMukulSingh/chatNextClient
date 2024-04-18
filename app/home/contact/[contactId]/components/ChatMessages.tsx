@@ -11,6 +11,7 @@ import FileMessage from "./FileMessage";
 import axios from "axios";
 import useSWR, { SWRConfig } from "swr";
 import { BASE_URL_SERVER } from "@/lib/BASE_URL";
+import { currentUser } from "@/lib/currentUser";
 interface ChatMessagesProps {
   receiverUser: IContacts | null;
   socket: {
@@ -23,7 +24,6 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   socket,
 }) => {
   const dispatch = useAppDispatch();
-  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
 
   const messages = useAppSelector((state) => state.chatSlice.messages);
   const mainComponent = useRef<HTMLDivElement>(null);

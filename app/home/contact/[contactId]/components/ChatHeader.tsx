@@ -9,7 +9,8 @@ interface ChatHeaderProps {
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({ receiverUser }) => {
-  const receiverProfileImg = receiverUser?.profileImage || "/blankProfilePic.png";
+  const receiverProfileImg =
+    receiverUser?.profileImage || "/blankProfilePic.png";
   return (
     <main className="flex justify-between gap-5 bg-slate-800 items-center w-full p-5 h-20">
       <section className="flex gap-2 items-center">

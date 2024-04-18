@@ -3,7 +3,7 @@ import { isAuthenticated } from "@/actions/isAuthenticated";
 import EmptyChat from "./contact/components/EmptyChat";
 
 const UsersPage = async ({ params }: { params: { userId: string } }) => {
-  const res = await isAuthenticated();
+  // const res = await isAuthenticated();
 
   // if (!res) redirect("/");
 

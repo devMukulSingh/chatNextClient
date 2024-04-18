@@ -28,7 +28,7 @@ const ImageGallery: FC<ImageGalleryProps> = ({
     setShowImg(true);
     setOpenLibrary(false);
   };
-  
+
   return (
     <Portal>
       {openLibrary && (

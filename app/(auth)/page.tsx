@@ -34,9 +34,7 @@ export default function Auth() {
     password: z.string().trim().min(6, {
       message: "Password must be minimum 6 characters",
     }),
-    profileImage: z
-      .any()
-    .optional(),
+    profileImage: z.any().optional(),
     name: z.string().optional(),
   });
   type formSchema = z.infer<typeof authSchema>;
@@ -51,18 +49,17 @@ export default function Auth() {
   } = form;
 
   const onSubmit: SubmitHandler<formSchema> = async (data: formSchema) => {
-    
     try {
       setLoading(true);
       if (type === "signup") {
         const formData = new FormData();
-        formData.append("profilImage",data.profileImage)
-        await axios.post(`${BASE_URL_SERVER}/api/auth/send-otp`, formData,{
-          params:{
-            name:data.name,
-            email:data.email,
-            password:data.password
-          }
+        formData.append("profilImage", data.profileImage);
+        await axios.post(`${BASE_URL_SERVER}/api/auth/send-otp`, formData, {
+          params: {
+            name: data.name,
+            email: data.email,
+            password: data.password,
+          },
         });
         router.push(`/verify-otp?email=${data.email}`);
       } else if (type === "signin") {

@@ -27,7 +27,12 @@ const SidebarHeader = () => {
         {/* Logout */}
       </Button>
       <figure className="relative h-10 w-10">
-        <Image fill src={profileImage} alt="profileImage" className="rounded-full" />
+        <Image
+          fill
+          src={profileImage}
+          alt="profileImage"
+          className="rounded-full"
+        />
       </figure>
     </main>
   );

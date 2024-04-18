@@ -29,7 +29,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         e.target.id !== "dropdown" &&
         e.target.id !== "dropdownButton" &&
         e.target.id !== "imageUploder" &&
-        e.target.id!=="image"
+        e.target.id !== "image"
       ) {
         setOpenDropdown(false);
       }

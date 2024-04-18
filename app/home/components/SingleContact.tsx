@@ -20,7 +20,7 @@ const SingleContact: React.FC<SingleContactProps> = ({ contact }) => {
     dispatch(setReceiverUser(contact));
   };
   return (
-    <main
+    <div
       onClick={handleClick}
       className={`
       ${selected?.id === contact.id ? "bg-slate-700 shadow-none rounded-none" : ""} 
@@ -52,7 +52,7 @@ const SingleContact: React.FC<SingleContactProps> = ({ contact }) => {
       </section>
       <p className="ml-auto text-sm text-neutral-400">12:23</p>
       <p></p>
-    </main>
+    </div>
   );
 };
 

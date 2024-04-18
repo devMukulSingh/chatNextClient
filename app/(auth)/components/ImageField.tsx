@@ -43,7 +43,7 @@ const ImageField: FC<ImageFieldProps> = ({ form }) => {
   ];
   const onChange = (
     e: ChangeEvent<HTMLInputElement>,
-    field: ControllerRenderProps<FieldValues, "profileImage">
+    field: ControllerRenderProps<FieldValues, "profileImage">,
   ) => {
     const image = e?.target?.files?.[0];
     field.onChange(image);
@@ -52,12 +52,12 @@ const ImageField: FC<ImageFieldProps> = ({ form }) => {
         toast.error("Maximum 5 MB picture allowed");
         return;
       }
-        if (!image?.type.includes("image")) {
-          toast.error("Only images allowed");
-          return;
-        }
-        console.log(image);
-        
+      if (!image?.type.includes("image")) {
+        toast.error("Only images allowed");
+        return;
+      }
+      console.log(image);
+
       //Converting to base64
       const fileReader = new FileReader();
       fileReader.onloadend = function (e) {

@@ -1,6 +1,7 @@
 "use client";
 import Button from "@/components/Button";
 import { BASE_URL_SERVER } from "@/lib/BASE_URL";
+import { currentUser } from "@/lib/currentUser";
 import { IContacts } from "@/lib/types";
 import { setSocketMessage } from "@/redux/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -21,9 +22,6 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
   const dispatch = useAppDispatch();
-  const sender: IContacts = JSON.parse(
-    localStorage.getItem("currentUser") || "{}",
-  );
 
   const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -39,7 +37,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
         setSocketMessage({
           message: currentMessage,
           receiverId: receiverUser?.id,
-          senderId: sender.id,
+          senderId: currentUser.id,
           createdAt: Date.now(),
         }),
       );
@@ -47,7 +45,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
         socket.current?.emit("send-msg", {
           message: currentMessage,
           receiverId: receiverUser?.id,
-          senderId: sender.id,
+          senderId: currentUser.id,
           createdAt: Date.now(),
         });
 
@@ -56,9 +54,9 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
             `${BASE_URL_SERVER}/api/message/post-message`,
             {
               receiverId: receiverUser?.id,
-              senderId: sender.id,
+              senderId: currentUser.id,
               message: currentMessage,
-            },
+            }
           );
         } catch (e) {
           console.log(`Error in handleMessageSend ${e}`);
@@ -78,16 +76,16 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
       formData,
       {
         params: {
-          senderId: sender.id,
+          senderId: currentUser.id,
           receiverId: receiverUser?.id,
           type: "file",
         },
-      },
+      }
     );
     dispatch(
       setSocketMessage({
         type: "file",
-        senderId: sender.id,
+        senderId: currentUser.id,
         receiverId: receiverUser?.id,
         message: res,
         createdAt: Date.now(),
@@ -98,7 +96,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
       type: "file",
       message: res,
       receiverId: receiverUser?.id,
-      senderId: sender.id,
+      senderId: currentUser.id,
       createdAt: Date.now(),
     });
   };
