@@ -16,8 +16,8 @@ const SingleContact: React.FC<SingleContactProps> = ({ contact }) => {
   const selected = useAppSelector((state) => state.chatSlice.receiverUser);
 
   const handleClick = () => {
-    router.push(`/home/contact/${contact.id}`);
     dispatch(setReceiverUser(contact));
+    router.push(`/home/contact/${contact.id}`);
   };
   return (
     <div

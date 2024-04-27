@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "@/redux/Providers";
+import { QueryProvider } from "@/lib/QueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +22,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <div id="modal"></div>
         <div id="image-modal"></div>
+        <QueryProvider>
         <Providers>{children}</Providers>
+        </QueryProvider>
         <Toaster />
       </body>
     </html>

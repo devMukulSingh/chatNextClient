@@ -18,7 +18,11 @@ const Contacts = () => {
     data: contacts,
     isLoading,
     error,
-  } = useSWR(`${BASE_URL_SERVER}/api/user/get-users`, fetcher);
+  } = useSWR(`${BASE_URL_SERVER}/api/user/get-users`, fetcher ,{
+    revalidateIfStale:false,
+    revalidateOnFocus:false,
+    refreshWhenHidden:false,
+  });
   if (isLoading) return <Loader />;
   if (error) console.log(error);
 

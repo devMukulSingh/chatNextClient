@@ -2,16 +2,14 @@
 import { IContacts, IMessage } from "@/lib/types";
 import SingleMessage from "./SingleMessage";
 import { useEffect, useRef, useState } from "react";
-import { getMessages } from "@/redux/reducers/getMessages";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import EmptyMessage from "../../../components/EmptyMessage";
 import { Socket } from "socket.io-client";
-import { setMessages, setSocketMessage } from "@/redux/chatSlice";
 import FileMessage from "./FileMessage";
 import axios from "axios";
-import useSWR, { SWRConfig } from "swr";
 import { BASE_URL_SERVER } from "@/lib/BASE_URL";
 import { currentUser } from "@/lib/currentUser";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 interface ChatMessagesProps {
   receiverUser: IContacts | null;
   socket: {
@@ -24,25 +22,47 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   socket,
 }) => {
   const dispatch = useAppDispatch();
-
-  const messages = useAppSelector((state) => state.chatSlice.messages);
+  const queryClient = useQueryClient();
+  // const messages = useAppSelector((state) => state.chatSlice.messages);
   const mainComponent = useRef<HTMLDivElement>(null);
-
+  // console.log(socket.current);
+  
+  const { data:messages, isLoading,error,isError } = useQuery({
+    queryKey:['chatMessages',receiverUser?.id],
+    queryFn: async() => {
+         const { data } =  await axios.get(`${BASE_URL_SERVER}/api/message/get-messages`,{
+            params:{
+                senderId:currentUser.id,
+                receiverId:receiverUser?.id
+            }
+        });
+        return data;
+      },
+      
+      refetchOnWindowFocus:false,
+      initialData : () => {
+        return queryClient.getQueryData(['chatMessages'])
+      },
+      refetchOnMount:true,
+      staleTime:Infinity
+      
+    }) 
   useEffect(() => {
     const componentHeight = mainComponent.current?.scrollHeight;
     mainComponent.current?.scrollTo(0, componentHeight || 0);
   }, [receiverUser, messages]);
-
-  useEffect(() => {
-    if (receiverUser) {
-      dispatch(
-        getMessages({
-          senderId: currentUser.id,
-          receiverId: receiverUser?.id,
-        }),
-      );
-    }
-  }, [receiverUser]);
+  if(isError) console.log(error);
+  
+  // useEffect(() => {
+  //   if (receiverUser) {
+  //     dispatch(
+  //       getMessages({
+  //         senderId: currentUser.id,
+  //         receiverId: receiverUser?.id,
+  //       }),
+  //     );
+  //   }
+  // }, [receiverUser]);
   return (
     <main
       className="flex flex-col gap-2 py-5 px-20 overflow-auto h-full  "

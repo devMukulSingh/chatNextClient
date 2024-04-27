@@ -42,7 +42,6 @@ export default function Auth() {
     resolver: zodResolver(authSchema),
   });
   const {
-    getValues,
     handleSubmit,
     register,
     formState: { errors },
@@ -72,9 +71,10 @@ export default function Auth() {
         router.push(`/home`);
         localStorage.setItem("currentUser", JSON.stringify(res.data));
       }
-    } catch (e) {
-      console.log(`Error in onsubmit ${e}`);
-      toast.error(`Something went wrong `);
+    } catch (e:any) {
+      if(e.response.status===400) toast.error(e.response.data.error)
+        else toast.error('Somethng went wrong')
+      console.log(e.message);
     } finally {
       setLoading(false);
     }

@@ -9,12 +9,17 @@ import { Socket, io } from "socket.io-client";
 import { useCallback, useEffect, useRef } from "react";
 import { currentUser } from "@/lib/currentUser";
 import { setSocket, setSocketMessage } from "@/redux/chatSlice";
+import { useQuery,useQueryClient } from "@tanstack/react-query";
+import { IMessage } from "@/lib/types";
 
 const ChatSection = () => {
+  const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
   const receiverUser = useAppSelector((state) => state.chatSlice.receiverUser);
   const socket = useRef<Socket | null>(null);
-
+  //  const { data:messages } = useQuery({
+  //   queryKey:['chatMessages']
+  //  })
   useEffect(() => {
     socket.current = io(BASE_URL_SERVER);
     socket.current.emit("add-user", currentUser.id);
@@ -25,7 +30,9 @@ const ChatSection = () => {
 
   useEffect(() => {
     socket.current?.on("receive-msg", (message) => {
-      dispatch(setSocketMessage(message));
+      const prevMessages:IMessage[] | undefined = queryClient.getQueryData(['chatMessages',receiverUser?.id]);
+      if(prevMessages)
+      queryClient.setQueryData(["chatMessages",receiverUser?.id], [...prevMessages,message])
     });
 
     return () => {
@@ -35,11 +42,11 @@ const ChatSection = () => {
 
   return (
     <>
-      <main className="w-full h-screen flex flex-col">
+      <div className="w-full h-screen flex flex-col">
         <ChatHeader receiverUser={receiverUser} />
         <ChatMessages receiverUser={receiverUser} socket={socket} />
         <ChatFooter receiverUser={receiverUser} socket={socket} />
-      </main>
+      </div>
     </>
   );
 };

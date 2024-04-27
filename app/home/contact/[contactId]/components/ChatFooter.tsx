@@ -2,7 +2,7 @@
 import Button from "@/components/Button";
 import { BASE_URL_SERVER } from "@/lib/BASE_URL";
 import { currentUser } from "@/lib/currentUser";
-import { IContacts } from "@/lib/types";
+import { IContacts, IMessage } from "@/lib/types";
 import { setSocketMessage } from "@/redux/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
@@ -10,6 +10,9 @@ import React, { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { BiPlus, BiSend } from "react-icons/bi";
 import { Socket, io } from "socket.io-client";
+import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
+import { QueryClient, useQueryClient, useQuery } from "@tanstack/react-query";
 
 interface ChatFooterProps {
   receiverUser: IContacts | null;
@@ -17,11 +20,40 @@ interface ChatFooterProps {
     current: Socket | null;
   };
 }
+interface Iarg {
+  formData: FormData;
+  params: {
+    senderId: string | undefined;
+    receiverId: string | undefined;
+    type: string;
+  };
+}
 
+async function sendRequest(
+  url: string,
+  {
+    arg,
+  }: {
+    arg: Iarg;
+  }
+) {
+  return await axios.post(url, arg.formData, {
+    params: arg.params,
+  });
+}
 const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
+  
+  const queryClient = useQueryClient();
   const inputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
   const dispatch = useAppDispatch();
+  
+  const {
+    data: res,
+    isMutating,
+    trigger,
+    error,
+  } = useSWRMutation(`${BASE_URL_SERVER}/api/message/upload-file`, sendRequest);
 
   const onKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -32,15 +64,29 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
   const handleMessageSend = async () => {
     const currentMessage = message;
     setMessage("");
+    const previousMessages:IMessage[] | undefined =  queryClient.getQueryData([
+      "chatMessages",
+      receiverUser?.id,
+    ]);
+    
     if (currentMessage !== "") {
-      dispatch(
-        setSocketMessage({
-          message: currentMessage,
-          receiverId: receiverUser?.id,
-          senderId: currentUser.id,
-          createdAt: Date.now(),
-        }),
-      );
+      if (previousMessages){
+         queryClient.setQueryData(
+          ["chatMessages", receiverUser?.id],
+          [
+            ...previousMessages,
+            {
+              message: currentMessage,
+              receiverId: receiverUser?.id,
+              senderId: currentUser.id,
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+              type: "text",
+            },
+          ]
+        );
+      }
+
       if (message !== "") {
         socket.current?.emit("send-msg", {
           message: currentMessage,
@@ -66,40 +112,56 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formData = new FormData();
+    let formData: FormData;
     if (e.target.files) {
-      formData.append("file", e.target?.files?.[0]);
-    }
-
-    const { data: res } = await axios.post(
-      `${BASE_URL_SERVER}/api/message/upload-file`,
-      formData,
-      {
-        params: {
-          senderId: currentUser.id,
-          receiverId: receiverUser?.id,
-          type: "file",
-        },
+      if (e.target.files[0].size > 5000000) {
+        toast.error("Maximum 5 Mb file size allowed");
+        return;
       }
-    );
-    dispatch(
-      setSocketMessage({
-        type: "file",
+      if (!e.target.files[0].type.includes("image")) {
+        toast.error("Only images allowed");
+        return;
+      }
+      formData = new FormData();
+      formData.append("file", e.target?.files?.[0]);
+      const params = {
         senderId: currentUser.id,
         receiverId: receiverUser?.id,
+        type: "file",
+      };
+      trigger({ formData, params });
+      const previousMessages: IMessage[] | undefined =
+      queryClient.getQueryData(["chatMessages", receiverUser?.id]);
+    if (previousMessages) {
+      queryClient.setQueryData(
+        ["chatMessages", receiverUser?.id],
+        [
+          ...previousMessages,
+          {
+            message: res,
+            receiverId: receiverUser?.id,
+            senderId: currentUser.id,
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            type: "file",
+          },
+        ]
+      );
+    }
+      socket.current?.emit("send-msg", {
+        type: "file",
         message: res,
+        receiverId: receiverUser?.id,
+        senderId: currentUser.id,
         createdAt: Date.now(),
-      }),
-    );
-
-    socket.current?.emit("send-msg", {
-      type: "file",
-      message: res,
-      receiverId: receiverUser?.id,
-      senderId: currentUser.id,
-      createdAt: Date.now(),
-    });
+      });
+    }
   };
+  if (error) {
+    console.error(error);
+    console.log(`Error in handleFile Upload`);
+  }
+
   /////////////////////////////////////////////////////////////////////
   return (
     <main className="flex gap-5 mt-auto items-center  bg-slate-800 h-20 px-10 py-5">
@@ -127,3 +189,15 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
 };
 
 export default ChatFooter;
+
+// const { data: res } = await axios.post(
+//   `${BASE_URL_SERVER}/api/message/upload-file`,
+//   formData,
+//   {
+//     params: {
+//       senderId: currentUser.id,
+//       receiverId: receiverUser?.id,
+//       type: "file",
+//     },
+//   }
+// );

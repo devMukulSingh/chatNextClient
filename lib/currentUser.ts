@@ -2,7 +2,7 @@
 import { IContacts } from "./types";
 
 interface IcurrentUser extends IContacts {
-  token:string
+  token: string;
 }
 
 export const currentUser: IcurrentUser =

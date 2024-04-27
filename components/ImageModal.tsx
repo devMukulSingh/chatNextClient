@@ -45,11 +45,10 @@ const ImageModal: React.FC<ImageModal> = ({
           className="z-50 bg-slate-950 justify-center bg-opacity-50 flex flex-col fixed items-center w-screen h-screen"
         >
           <section className="ml-auto flex gap-5 items-center">
-            <Link
-              href={`${BASE_URL_SERVER}/api/message/download-file/${imageId}`}
-            >
+            {/* <Link
+              href={`${BASE_URL_SERVER}/api/message/download-file/${imageId}`} > */}
               <LuDownload className="cursor-pointer text-3xl text-white hover:bg-slate-700 rounded-md" />
-            </Link>
+            {/* </Link> */}
             <BsX
               onClick={() => setOpenImage(false)}
               className="text-6xl cursor-pointer  text-white"
