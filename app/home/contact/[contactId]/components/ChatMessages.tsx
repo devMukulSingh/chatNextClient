@@ -33,6 +33,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
     error,
     isError,
   } = useQuery({
+    // retry:false,
     queryKey: ["chatMessages", receiverUser?.id],
     queryFn: async () => {
       const { data } = await axios.get(
@@ -46,7 +47,6 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
       );
       return data;
     },
-
     refetchOnWindowFocus: false,
     initialData: () => {
       return queryClient.getQueryData(["chatMessages"]);

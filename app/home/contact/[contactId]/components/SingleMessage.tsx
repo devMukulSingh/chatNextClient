@@ -27,11 +27,11 @@ const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
   const [editMessage, setEditMessage] = useState("");
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-const {
-  data: res,
-  isLoading,
-  error,
-} = useSWR(`${BASE_URL_SERVER}/api/message/upload-file`);
+  const {
+    data: res,
+    isLoading,
+    error,
+  } = useSWR(`${BASE_URL_SERVER}/api/message/upload-file`);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.message);

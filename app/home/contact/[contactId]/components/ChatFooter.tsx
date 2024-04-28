@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import { BiPlus, BiSend } from "react-icons/bi";
 import { Socket, io } from "socket.io-client";
 import useSWRMutation from "swr/mutation";
-import {useQueryClient,  } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ChatFooterProps {
   receiverUser: IContacts | null;
@@ -126,7 +126,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
         type: "file",
       };
       const { data } = await trigger({ formData, params });
-      
+
       const previousMessages: IMessage[] | undefined = queryClient.getQueryData(
         ["chatMessages", receiverUser?.id],
       );
@@ -143,7 +143,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
               updatedAt: Date.now(),
               type: "file",
             },
-          ]
+          ],
         );
       }
       socket.current?.emit("send-msg", {

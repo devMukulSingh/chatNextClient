@@ -38,10 +38,10 @@ const VerifyPage = () => {
       router.push(`/home`);
     } catch (e: any) {
       console.log(e);
-      
+
       if (e.status === 500) {
         toast.error(`Something went wrong`);
-      } else  {
+      } else {
         toast.error(e.response.data.error);
       }
       console.log(`Error in onSubmit ${e}`);

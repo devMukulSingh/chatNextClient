@@ -10,11 +10,13 @@ import { useRouter } from "next/navigation";
 import { currentUser } from "@/lib/currentUser";
 import Image from "next/image";
 import ImageModal from "@/components/ImageModal";
+import useSWRMutation from "swr/mutation";
+import useSWR from "swr";
+import { downloadFile } from "@/lib/useDownload";
 
 interface FileMessageProps {
   message: IMessage;
 }
-
 export interface IdropdownOptions {
   title: string;
   onClick: () => void;
@@ -23,35 +25,27 @@ export interface IdropdownOptions {
 const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
   const router = useRouter();
   const [messageStatus, setMessageStatus] = useState("sent");
-  const [loading, setLoading] = useState(false);
   const [editMessage, setEditMessage] = useState("");
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [openImage, setOpenImage] = useState(false);
 
+  async function sendRequest(url:string){
+    return axios.delete(url,{
+      params:{messageId:message.id}
+    })
+  }
+
+  const { data,error,isMutating,trigger } = useSWRMutation(
+    `${BASE_URL_SERVER}/api/message/delete-message`,
+    sendRequest
+  );
   const handleDelete = async () => {
-    try {
-      setLoading(true);
-      await axios.delete(`${BASE_URL_SERVER}/api/message/delete-message`, {
-        params: { messageId: message.id },
-      });
+      trigger();
       setOpenDropdown(false);
       router.refresh();
-    } catch (e) {
-      console.log(`Error in handleDelete ${e}`);
-    } finally {
-      setLoading(false);
     }
-  };
-  const handleDownload = async () => {
-    try {
-      await axios.get(
-        `${BASE_URL_SERVER}/api/message/download-file/${message.id}`,
-      );
-    } catch (e) {
-      console.log(`Error in handleDownload ${e}`);
-    }
-  };
+
   const dropdownOptions: IdropdownOptions[] = [
     {
       title: "Delete",
@@ -59,7 +53,7 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
     },
     {
       title: "download",
-      onClick: handleDownload,
+      onClick: () => downloadFile(imageUrl)
     },
   ];
   useEffect(() => {
@@ -75,11 +69,14 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
     setOpenDropdown((prev) => !prev);
   };
   const imageUrl = message.message;
-
+  if(error){
+    console.log(error);
+    console.log(`Error in delete file message ${error} `);
+  }
   ////////////////////////////////////////////////////////////////////////////////////
   return (
     <>
-      <main
+      <div
         className={`
         relative
         bg-slate-700
@@ -131,14 +128,14 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
             />
           )}
         </section>
-      </main>
+      </div>
       {openDialog && (
         <Modal
           value={editMessage}
           setValue={setEditMessage}
           title="Edit message"
           setOpenDialog={setOpenDialog}
-          loading={loading}
+          loading={isMutating}
         />
       )}
       {openImage && (
