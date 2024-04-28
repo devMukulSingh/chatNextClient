@@ -23,7 +23,7 @@ export default function RootLayout({
         <div id="modal"></div>
         <div id="image-modal"></div>
         <QueryProvider>
-        <Providers>{children}</Providers>
+          <Providers>{children}</Providers>
         </QueryProvider>
         <Toaster />
       </body>

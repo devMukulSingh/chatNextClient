@@ -109,6 +109,7 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
             src={imageUrl}
             alt="sendImage"
             className="object-contain"
+            quality={50}
           />
         </figure>
         <section className="flex items-center">

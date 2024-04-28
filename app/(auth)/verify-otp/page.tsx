@@ -37,10 +37,12 @@ const VerifyPage = () => {
       localStorage.setItem("currentUser", JSON.stringify(res.data));
       router.push(`/home`);
     } catch (e: any) {
+      console.log(e);
+      
       if (e.status === 500) {
         toast.error(`Something went wrong`);
-      } else {
-        toast.error(e.message);
+      } else  {
+        toast.error(e.response.data.error);
       }
       console.log(`Error in onSubmit ${e}`);
       console.log(e.response);

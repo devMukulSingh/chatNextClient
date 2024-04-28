@@ -26,33 +26,40 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   // const messages = useAppSelector((state) => state.chatSlice.messages);
   const mainComponent = useRef<HTMLDivElement>(null);
   // console.log(socket.current);
-  
-  const { data:messages, isLoading,error,isError } = useQuery({
-    queryKey:['chatMessages',receiverUser?.id],
-    queryFn: async() => {
-         const { data } =  await axios.get(`${BASE_URL_SERVER}/api/message/get-messages`,{
-            params:{
-                senderId:currentUser.id,
-                receiverId:receiverUser?.id
-            }
-        });
-        return data;
-      },
-      
-      refetchOnWindowFocus:false,
-      initialData : () => {
-        return queryClient.getQueryData(['chatMessages'])
-      },
-      refetchOnMount:true,
-      staleTime:Infinity
-      
-    }) 
+
+  const {
+    data: messages,
+    isLoading,
+    error,
+    isError,
+  } = useQuery({
+    queryKey: ["chatMessages", receiverUser?.id],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `${BASE_URL_SERVER}/api/message/get-messages`,
+        {
+          params: {
+            senderId: currentUser.id,
+            receiverId: receiverUser?.id,
+          },
+        },
+      );
+      return data;
+    },
+
+    refetchOnWindowFocus: false,
+    initialData: () => {
+      return queryClient.getQueryData(["chatMessages"]);
+    },
+    refetchOnMount: true,
+    staleTime: Infinity,
+  });
   useEffect(() => {
     const componentHeight = mainComponent.current?.scrollHeight;
     mainComponent.current?.scrollTo(0, componentHeight || 0);
   }, [receiverUser, messages]);
-  if(isError) console.log(error);
-  
+  if (isError) console.log(error);
+
   // useEffect(() => {
   //   if (receiverUser) {
   //     dispatch(

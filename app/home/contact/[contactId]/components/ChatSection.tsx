@@ -9,7 +9,7 @@ import { Socket, io } from "socket.io-client";
 import { useCallback, useEffect, useRef } from "react";
 import { currentUser } from "@/lib/currentUser";
 import { setSocket, setSocketMessage } from "@/redux/chatSlice";
-import { useQuery,useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { IMessage } from "@/lib/types";
 
 const ChatSection = () => {
@@ -30,9 +30,15 @@ const ChatSection = () => {
 
   useEffect(() => {
     socket.current?.on("receive-msg", (message) => {
-      const prevMessages:IMessage[] | undefined = queryClient.getQueryData(['chatMessages',receiverUser?.id]);
-      if(prevMessages)
-      queryClient.setQueryData(["chatMessages",receiverUser?.id], [...prevMessages,message])
+      const prevMessages: IMessage[] | undefined = queryClient.getQueryData([
+        "chatMessages",
+        receiverUser?.id,
+      ]);
+      if (prevMessages)
+        queryClient.setQueryData(
+          ["chatMessages", receiverUser?.id],
+          [...prevMessages, message],
+        );
     });
 
     return () => {

@@ -3,16 +3,14 @@ import Button from "@/components/Button";
 import { BASE_URL_SERVER } from "@/lib/BASE_URL";
 import { currentUser } from "@/lib/currentUser";
 import { IContacts, IMessage } from "@/lib/types";
-import { setSocketMessage } from "@/redux/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { BiPlus, BiSend } from "react-icons/bi";
 import { Socket, io } from "socket.io-client";
-import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
-import { QueryClient, useQueryClient, useQuery } from "@tanstack/react-query";
+import {useQueryClient,  } from "@tanstack/react-query";
 
 interface ChatFooterProps {
   receiverUser: IContacts | null;
@@ -35,19 +33,17 @@ async function sendRequest(
     arg,
   }: {
     arg: Iarg;
-  }
+  },
 ) {
   return await axios.post(url, arg.formData, {
     params: arg.params,
   });
 }
 const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
-  
   const queryClient = useQueryClient();
   const inputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
-  const dispatch = useAppDispatch();
-  
+
   const {
     data: res,
     isMutating,
@@ -64,14 +60,14 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
   const handleMessageSend = async () => {
     const currentMessage = message;
     setMessage("");
-    const previousMessages:IMessage[] | undefined =  queryClient.getQueryData([
+    const previousMessages: IMessage[] | undefined = queryClient.getQueryData([
       "chatMessages",
       receiverUser?.id,
     ]);
-    
+
     if (currentMessage !== "") {
-      if (previousMessages){
-         queryClient.setQueryData(
+      if (previousMessages) {
+        queryClient.setQueryData(
           ["chatMessages", receiverUser?.id],
           [
             ...previousMessages,
@@ -83,7 +79,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
               updatedAt: Date.now(),
               type: "text",
             },
-          ]
+          ],
         );
       }
 
@@ -102,7 +98,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
               receiverId: receiverUser?.id,
               senderId: currentUser.id,
               message: currentMessage,
-            }
+            },
           );
         } catch (e) {
           console.log(`Error in handleMessageSend ${e}`);
@@ -129,28 +125,30 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
         receiverId: receiverUser?.id,
         type: "file",
       };
-      trigger({ formData, params });
-      const previousMessages: IMessage[] | undefined =
-      queryClient.getQueryData(["chatMessages", receiverUser?.id]);
-    if (previousMessages) {
-      queryClient.setQueryData(
+      const { data } = await trigger({ formData, params });
+      
+      const previousMessages: IMessage[] | undefined = queryClient.getQueryData(
         ["chatMessages", receiverUser?.id],
-        [
-          ...previousMessages,
-          {
-            message: res,
-            receiverId: receiverUser?.id,
-            senderId: currentUser.id,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-            type: "file",
-          },
-        ]
       );
-    }
+      if (previousMessages) {
+        queryClient.setQueryData(
+          ["chatMessages", receiverUser?.id],
+          [
+            ...previousMessages,
+            {
+              message: data,
+              receiverId: receiverUser?.id,
+              senderId: currentUser.id,
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+              type: "file",
+            },
+          ]
+        );
+      }
       socket.current?.emit("send-msg", {
         type: "file",
-        message: res,
+        message: data,
         receiverId: receiverUser?.id,
         senderId: currentUser.id,
         createdAt: Date.now(),

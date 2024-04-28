@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import Modal from "@/components/Modal";
 import { useRouter } from "next/navigation";
 import { currentUser } from "@/lib/currentUser";
+import useSWRMutation from "swr/mutation";
+import useSWR from "swr";
 
 interface SingleMessageProps {
   message: IMessage;
@@ -25,6 +27,11 @@ const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
   const [editMessage, setEditMessage] = useState("");
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+const {
+  data: res,
+  isLoading,
+  error,
+} = useSWR(`${BASE_URL_SERVER}/api/message/upload-file`);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.message);
@@ -108,7 +115,7 @@ const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
         `}
       >
         <div id="message" className="self-center break-all line-clamp-3 ">
-          {message?.message}
+          {isLoading && <>loading....</>} {message?.message}
         </div>
         <section className=" ml-auto">
           <h1 className="text-[12px] whitespace-nowrap text-neutral-400 ml-auto mt-auto">

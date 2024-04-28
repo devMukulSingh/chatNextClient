@@ -47,7 +47,7 @@ const ImageModal: React.FC<ImageModal> = ({
           <section className="ml-auto flex gap-5 items-center">
             {/* <Link
               href={`${BASE_URL_SERVER}/api/message/download-file/${imageId}`} > */}
-              <LuDownload className="cursor-pointer text-3xl text-white hover:bg-slate-700 rounded-md" />
+            <LuDownload className="cursor-pointer text-3xl text-white hover:bg-slate-700 rounded-md" />
             {/* </Link> */}
             <BsX
               onClick={() => setOpenImage(false)}

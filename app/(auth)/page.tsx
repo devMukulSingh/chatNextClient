@@ -71,9 +71,9 @@ export default function Auth() {
         router.push(`/home`);
         localStorage.setItem("currentUser", JSON.stringify(res.data));
       }
-    } catch (e:any) {
-      if(e.response.status===400) toast.error(e.response.data.error)
-        else toast.error('Somethng went wrong')
+    } catch (e: any) {
+      if (e.response.status === 400) toast.error(e.response.data.error);
+      else toast.error("Somethng went wrong");
       console.log(e.message);
     } finally {
       setLoading(false);
