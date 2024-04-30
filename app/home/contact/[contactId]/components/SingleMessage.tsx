@@ -74,7 +74,12 @@ const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
       await axios.patch(`${BASE_URL_SERVER}/api/message/edit-message`, {
         message: editMessage,
         messageId: message.id,
-      });
+        
+      },
+      {
+        headers:{Authorization:currentUser.id}
+      }
+    );
       setOpenDialog(false);
     } catch (e) {
       console.log(`Error in handleEdit ${e}`);

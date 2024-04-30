@@ -17,9 +17,7 @@ const ChatSection = () => {
   const dispatch = useAppDispatch();
   const receiverUser = useAppSelector((state) => state.chatSlice.receiverUser);
   const socket = useRef<Socket | null>(null);
-  //  const { data:messages } = useQuery({
-  //   queryKey:['chatMessages']
-  //  })
+
   useEffect(() => {
     socket.current = io(BASE_URL_SERVER);
     socket.current.emit("add-user", currentUser.id);

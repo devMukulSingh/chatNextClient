@@ -5,11 +5,14 @@ import useSWR from "swr";
 import axios from "axios";
 import { BASE_URL_SERVER } from "@/lib/BASE_URL";
 import Loader from "@/components/Loader";
+import { currentUser } from "@/lib/currentUser";
 
 const fetcher = (url: string) =>
   axios
     .get(url, {
-      //  withCredentials:true,
+      headers:{
+        Authorization:currentUser.token
+      }
     })
     .then((res) => res.data);
 

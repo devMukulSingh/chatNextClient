@@ -18,11 +18,10 @@ const ImageModal: React.FC<ImageModal> = ({
   imageUrl,
   imageId,
 }) => {
-
   const dropdownOptions = [
     {
       title: "Download",
-      onClick: () => downloadFile(imageUrl)
+      onClick: () => downloadFile(imageUrl),
     },
   ];
   const [openDropdown, setOpenDropdown] = useState(false);

@@ -26,23 +26,47 @@ interface Iarg {
     type: string;
   };
 }
-
+interface Iarg2 {
+    receiverId: string | undefined;
+    senderId: string;
+    message: string;
+}
 async function sendRequest(
   url: string,
   {
     arg,
   }: {
     arg: Iarg;
-  },
+  }
 ) {
   return await axios.post(url, arg.formData, {
     params: arg.params,
+    headers: {
+      Authorization: currentUser.token,
+    },
   });
+}
+
+async function postMessage(url: string, { arg }: { arg: Iarg2 }) {
+  return await axios.post(url, {
+    ...arg
+  },
+  {
+    headers:{
+      Authorization:currentUser.token
+    }
+  }
+);
 }
 const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
   const queryClient = useQueryClient();
   const inputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
+
+  const { trigger: triggerPostMessage } = useSWRMutation(
+    `${BASE_URL_SERVER}/api/message/post-message`,
+    postMessage
+  );
 
   const {
     data: res,
@@ -79,30 +103,20 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
               updatedAt: Date.now(),
               type: "text",
             },
-          ],
+          ]
         );
       }
-
+      const params = {
+        message: currentMessage,
+        receiverId: receiverUser?.id,
+        senderId: currentUser.id,
+      };
       if (message !== "") {
-        socket.current?.emit("send-msg", {
-          message: currentMessage,
-          receiverId: receiverUser?.id,
-          senderId: currentUser.id,
-          createdAt: Date.now(),
-        });
-
-        try {
-          const res = await axios.post(
-            `${BASE_URL_SERVER}/api/message/post-message`,
-            {
-              receiverId: receiverUser?.id,
-              senderId: currentUser.id,
-              message: currentMessage,
-            },
-          );
-        } catch (e) {
-          console.log(`Error in handleMessageSend ${e}`);
-        }
+          socket.current?.emit("send-msg", {
+            ...params,
+            createdAt: Date.now(),
+          });
+          triggerPostMessage({...params});
       }
     }
   };
@@ -128,7 +142,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
       const { data } = await trigger({ formData, params });
 
       const previousMessages: IMessage[] | undefined = queryClient.getQueryData(
-        ["chatMessages", receiverUser?.id],
+        ["chatMessages", receiverUser?.id]
       );
       if (previousMessages) {
         queryClient.setQueryData(
@@ -143,7 +157,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ receiverUser, socket }) => {
               updatedAt: Date.now(),
               type: "file",
             },
-          ],
+          ]
         );
       }
       socket.current?.emit("send-msg", {

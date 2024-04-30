@@ -30,21 +30,24 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openImage, setOpenImage] = useState(false);
 
-  async function sendRequest(url:string){
-    return axios.delete(url,{
-      params:{messageId:message.id}
-    })
+  async function sendRequest(url: string) {
+    return axios.delete(url, {
+      params: { messageId: message.id },
+      headers:{
+        Authorization:currentUser.token
+      }
+    });
   }
 
-  const { data,error,isMutating,trigger } = useSWRMutation(
+  const { data, error, isMutating, trigger } = useSWRMutation(
     `${BASE_URL_SERVER}/api/message/delete-message`,
-    sendRequest
+    sendRequest,
   );
   const handleDelete = async () => {
-      trigger();
-      setOpenDropdown(false);
-      router.refresh();
-    }
+    trigger();
+    setOpenDropdown(false);
+    router.refresh();
+  };
 
   const dropdownOptions: IdropdownOptions[] = [
     {
@@ -53,7 +56,7 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
     },
     {
       title: "download",
-      onClick: () => downloadFile(imageUrl)
+      onClick: () => downloadFile(imageUrl),
     },
   ];
   useEffect(() => {
@@ -69,7 +72,7 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
     setOpenDropdown((prev) => !prev);
   };
   const imageUrl = message.message;
-  if(error){
+  if (error) {
     console.log(error);
     console.log(`Error in delete file message ${error} `);
   }

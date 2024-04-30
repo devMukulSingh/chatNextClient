@@ -43,6 +43,9 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
             senderId: currentUser.id,
             receiverId: receiverUser?.id,
           },
+          headers:{
+            Authorization:currentUser.token
+          }
         },
       );
       return data;
