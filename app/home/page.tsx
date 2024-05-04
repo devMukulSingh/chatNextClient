@@ -8,9 +8,9 @@ const UsersPage = async ({ params }: { params: { userId: string } }) => {
   // if (!res) redirect("/");
 
   return (
-    <main className="flex w-[calc(100vw-30rem)]">
+    <div className="flex w-[calc(100vw-30rem)]">
       <EmptyChat />
-    </main>
+    </div>
   );
 };
 

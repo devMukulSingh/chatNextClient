@@ -16,7 +16,6 @@ interface ChatMessagesProps {
     current: Socket | null;
   };
 }
-
 const ChatMessages: React.FC<ChatMessagesProps> = ({
   receiverUser,
   socket,
@@ -43,18 +42,14 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
             senderId: currentUser.id,
             receiverId: receiverUser?.id,
           },
-          headers:{
-            Authorization:currentUser.token
-          }
+          headers: {
+            Authorization: currentUser.token,
+          },
         },
       );
       return data;
     },
     refetchOnWindowFocus: false,
-    initialData: () => {
-      return queryClient.getQueryData(["chatMessages"]);
-    },
-    refetchOnMount: true,
     staleTime: Infinity,
   });
   useEffect(() => {
@@ -63,16 +58,6 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   }, [receiverUser, messages]);
   if (isError) console.log(error);
 
-  // useEffect(() => {
-  //   if (receiverUser) {
-  //     dispatch(
-  //       getMessages({
-  //         senderId: currentUser.id,
-  //         receiverId: receiverUser?.id,
-  //       }),
-  //     );
-  //   }
-  // }, [receiverUser]);
   return (
     <main
       className="flex flex-col gap-2 py-5 px-20 overflow-auto h-full  "

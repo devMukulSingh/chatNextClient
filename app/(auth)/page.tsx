@@ -14,14 +14,16 @@ import { BASE_URL_SERVER } from "@/lib/BASE_URL";
 import { RiLoaderFill } from "react-icons/ri";
 import { BiSolidHide, BiSolidShow } from "react-icons/bi";
 import ImageField from "./components/ImageField";
+import useSWR from "swr";
 // import { authSchema } from "@/lib/formSchemas";
-
+const fetcher = ( (url:string) => { axios.get(url) })
 export default function Auth() {
   const router = useRouter();
   const [type, setType] = useState("signin");
   const [loading, setLoading] = useState(false);
   const [inputType, setInputType] = useState("password");
-
+  useSWR(`${BASE_URL_SERVER}/api/start-server`,fetcher);
+  
   function checkFileType(file: File) {
     if (file.type.includes("image")) return true;
     return false;

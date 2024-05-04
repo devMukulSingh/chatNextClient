@@ -33,9 +33,9 @@ const FileMessage: React.FC<FileMessageProps> = ({ message }) => {
   async function sendRequest(url: string) {
     return axios.delete(url, {
       params: { messageId: message.id },
-      headers:{
-        Authorization:currentUser.token
-      }
+      headers: {
+        Authorization: currentUser.token,
+      },
     });
   }
 

@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import axios from "axios";
 import { BASE_URL_SERVER } from "@/lib/BASE_URL";
 import Dropdown from "@/components/Dropdown";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Modal from "@/components/Modal";
 import { useRouter } from "next/navigation";
 import { currentUser } from "@/lib/currentUser";
@@ -21,6 +21,11 @@ export interface IdropdownOptions {
 }
 
 const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
+    useCallback(() => {
+      if (currentUser.id !== message.senderId) {
+        setMessageStatus("received");
+      }
+    }, []);
   const router = useRouter();
   const [messageStatus, setMessageStatus] = useState("sent");
   const [loading, setLoading] = useState(false);
@@ -71,35 +76,22 @@ const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
   ];
   const handleEdit = async () => {
     try {
-      await axios.patch(`${BASE_URL_SERVER}/api/message/edit-message`, {
-        message: editMessage,
-        messageId: message.id,
-        
-      },
-      {
-        headers:{Authorization:currentUser.id}
-      }
-    );
+      await axios.patch(
+        `${BASE_URL_SERVER}/api/message/edit-message`,
+        {
+          message: editMessage,
+          messageId: message.id,
+        },
+        {
+          headers: { Authorization: currentUser.id },
+        },
+      );
       setOpenDialog(false);
     } catch (e) {
       console.log(`Error in handleEdit ${e}`);
     }
   };
-  useEffect(() => {
-    if (currentUser.id !== message.senderId) {
-      setMessageStatus("received");
-    }
-  }, []);
-  // useEffect(() => {
 
-  //     const messageElem = document.querySelector('#message');
-  //     const width = messageElem?.scrollHeight
-  //     const height = messageElem?.clientHeight
-
-  //     console.log(width, height);
-  //     // const a = width*height
-
-  // }, [message])
   ////////////////////////////////////////////////////////////////////////////////////
   return (
     <>
@@ -120,7 +112,7 @@ const SingleMessage: React.FC<SingleMessageProps> = ({ message }) => {
         `}
       >
         <div id="message" className="self-center break-all line-clamp-3 ">
-          {isLoading && <>loading....</>} {message?.message}
+          {message?.message}
         </div>
         <section className=" ml-auto">
           <h1 className="text-[12px] whitespace-nowrap text-neutral-400 ml-auto mt-auto">

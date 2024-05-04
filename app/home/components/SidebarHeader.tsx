@@ -7,24 +7,34 @@ import Image from "next/image";
 import { LuLogOut } from "react-icons/lu";
 import SearchBar from "./SearchBar";
 import { currentUser } from "@/lib/currentUser";
+import { useState } from "react";
+import useSWR from "swr";
 
+const fetcher = ( (url:string) => axios.get(url).then( (res) => res.data) )
 const SidebarHeader = () => {
   const router = useRouter();
-
   const profileImage = currentUser?.profileImage || "/blankProfilePic.png";
+  const [isFetching, setIsFetching] = useState(false);
+  const { isLoading,error} = useSWR(
+    isFetching?`${BASE_URL_SERVER}/api/auth/logout-user` : null,
+    fetcher
+  );
+  const { isLoading:isLoading2,error:error2 } = useSWR(isFetching?`${BASE_URL_CLIENT}/api/user`:null, fetcher);
   const handleLogout = async () => {
-    await axios.get(`${BASE_URL_SERVER}/api/auth/logout-user`);
-    await axios.get(`${BASE_URL_CLIENT}/api/user`);
+    setIsFetching(true);
     localStorage.removeItem("token");
     router.push("/");
   };
-
+  if(error || error2){
+    console.log("Error in logout",error,error2);
+  }
   return (
-    <main className=" h-20 p-5 gap-5  w-full flex justify-between rounded-md ">
+    <div className=" h-20 p-5 gap-5  w-full flex justify-between rounded-md ">
       <SearchBar placeholder="Search or start a new chat" />
-      <Button onClick={handleLogout}>
+      <Button
+        disabled={isLoading || isLoading2} 
+        onClick={handleLogout}>
         <LuLogOut className="" />
-        {/* Logout */}
       </Button>
       <figure className="relative h-10 w-10">
         <Image
@@ -34,7 +44,7 @@ const SidebarHeader = () => {
           className="rounded-full"
         />
       </figure>
-    </main>
+    </div>
   );
 };
 

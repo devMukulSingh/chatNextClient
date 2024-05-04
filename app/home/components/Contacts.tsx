@@ -10,9 +10,9 @@ import { currentUser } from "@/lib/currentUser";
 const fetcher = (url: string) =>
   axios
     .get(url, {
-      headers:{
-        Authorization:currentUser.token
-      }
+      headers: {
+        Authorization: currentUser.token,
+      },
     })
     .then((res) => res.data);
 
